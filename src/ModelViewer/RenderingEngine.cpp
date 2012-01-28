@@ -35,7 +35,7 @@ public:
     void setCamera(ICamera *camera);
     void addObject(IObject *obj);
     void removeObject(IObject *obj);
-    void render(list<IObject *> &objects);
+    void render(list<IObject *> &objects3d, list<IObject *> &objects2d);
 private:
     GLuint buildShader(string *source, GLenum shaderType) const;
     GLuint buildProgram(string *vShader, string *fShader) const;
@@ -115,7 +115,6 @@ void RenderingEngine::Initialize(int width, int height)
     glEnableVertexAttribArray(m_attributes.position);
     glEnableVertexAttribArray(m_attributes.normal);
     glEnableVertexAttribArray(m_attributes.textureCoord);
-    glEnable(GL_DEPTH_TEST);
     
     // Set up some default material parameters.
     glUniform3f(m_uniforms.ambientMaterial, 0.4f, 0.4f, 0.4f);
@@ -277,7 +276,7 @@ void RenderingEngine::SetBlending(BlendMode mode)
 }
 */
     
-void RenderingEngine::render(list<IObject *> &objects)
+void RenderingEngine::render(list<IObject *> &objects3d, list<IObject *> &objects2d)
 {
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -299,47 +298,98 @@ void RenderingEngine::render(list<IObject *> &objects)
     list<IMesh *> *objMeshes;
     list<IMesh *>::iterator mesh;
     
-    for (obj = objects.begin(); obj != objects.end(); ++obj) {
+    glEnable(GL_DEPTH_TEST);
+    
+    for (obj = objects3d.begin(); obj != objects3d.end(); ++obj) {
         objMeshes = (*obj)->getMeshes();
         for (mesh = objMeshes->begin(); mesh != objMeshes->end(); ++mesh) {
-            
-            // Set the model view matrix
-            mat4 modelview = (*mesh)->meshMtx;
-            glUniformMatrix4fv(m_uniforms.modelview, 1, 0, modelview.Pointer());
-            
-            // Set the normal matrix
-            mat3 normalMatrix = modelview.ToMat3();
-            glUniformMatrix3fv(m_uniforms.normalMatrix, 1, 0, normalMatrix.Pointer());
-            
-            // Set the texture matrix
-            mat4 texturematrix = (*mesh)->textureMtx;
-            glUniformMatrix4fv(m_uniforms.textureMatrix, 1, 0, texturematrix.Pointer());
-            
-            // Set the diffuse color.
-            vec3 color = vec3(0.8, 0.8, 0.8);
-            glVertexAttrib4f(m_attributes.diffuseMaterial, color.x, color.y, color.z, 1);
-            
-            // Draw the surface.
-            MeshRef meshRef = (*mesh)->meshRef;
-            TextureRef textureRef = (*mesh)->textureRef;
-            int stride = 11 * sizeof(GLfloat);
-            const GLvoid* normalOffset = (const GLvoid*) (3 * sizeof(GLfloat));
-            const GLvoid* texCoordOffset = (const GLvoid*) (3 * sizeof(vec3));
-            GLint position = m_attributes.position;
-            GLint normal = m_attributes.normal;
-            GLint texCoord = m_attributes.textureCoord;
-            
-            glBindTexture(GL_TEXTURE_2D, textureRef.textureBuffer);
-            glBindBuffer(GL_ARRAY_BUFFER, meshRef.vertexBuffer);
-            glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, 0);
-            glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, normalOffset);
-            glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, stride, texCoordOffset);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshRef.indexBuffer);
-            glDrawElements(GL_TRIANGLES, meshRef.indexCount, GL_UNSIGNED_SHORT, 0);
+            if ((*mesh)->display) {
+                // Set the model view matrix
+                mat4 modelview = (*mesh)->meshMtx;
+                glUniformMatrix4fv(m_uniforms.modelview, 1, 0, modelview.Pointer());
+                
+                // Set the normal matrix
+                mat3 normalMatrix = modelview.ToMat3();
+                glUniformMatrix3fv(m_uniforms.normalMatrix, 1, 0, normalMatrix.Pointer());
+                
+                // Set the texture matrix
+                mat4 texturematrix = (*mesh)->textureMtx;
+                glUniformMatrix4fv(m_uniforms.textureMatrix, 1, 0, texturematrix.Pointer());
+                
+                // Set the diffuse color.
+                vec3 color = vec3(0.8, 0.8, 0.8);
+                glVertexAttrib4f(m_attributes.diffuseMaterial, color.x, color.y, color.z, 1);
+                
+                // Draw the surface.
+                MeshRef meshRef = (*mesh)->meshRef;
+                TextureRef textureRef = (*mesh)->textureRef;
+                int stride = 11 * sizeof(GLfloat);
+                const GLvoid* normalOffset = (const GLvoid*) (3 * sizeof(GLfloat));
+                const GLvoid* texCoordOffset = (const GLvoid*) (3 * sizeof(vec3));
+                GLint position = m_attributes.position;
+                GLint normal = m_attributes.normal;
+                GLint texCoord = m_attributes.textureCoord;
+                
+                glBindTexture(GL_TEXTURE_2D, textureRef.textureBuffer);
+                glBindBuffer(GL_ARRAY_BUFFER, meshRef.vertexBuffer);
+                glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, 0);
+                glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, normalOffset);
+                glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, stride, texCoordOffset);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshRef.indexBuffer);
+                glDrawElements(GL_TRIANGLES, meshRef.indexCount, GL_UNSIGNED_SHORT, 0);
+            }
         }
     }
     
+    glDisable(GL_DEPTH_TEST);
     
+    projectionMatrix = mat4::Parallel(0, m_mainScreenSize.x, 0, m_mainScreenSize.y, 0, 10);
+    glUniformMatrix4fv(m_uniforms.projection, 1, 0, projectionMatrix.Pointer());
+    
+    glEnable(GL_BLEND);
+    
+    for (obj = objects2d.begin(); obj != objects2d.end(); ++obj) {
+        objMeshes = (*obj)->getMeshes();
+        for (mesh = objMeshes->begin(); mesh != objMeshes->end(); ++mesh) {
+            if ((*mesh)->display) {
+                // Set the model view matrix
+                mat4 modelview = (*mesh)->meshMtx;
+                glUniformMatrix4fv(m_uniforms.modelview, 1, 0, modelview.Pointer());
+                
+                // Set the normal matrix
+                mat3 normalMatrix = modelview.ToMat3();
+                glUniformMatrix3fv(m_uniforms.normalMatrix, 1, 0, normalMatrix.Pointer());
+                
+                // Set the texture matrix
+                mat4 texturematrix = (*mesh)->textureMtx;
+                glUniformMatrix4fv(m_uniforms.textureMatrix, 1, 0, texturematrix.Pointer());
+                
+                // Set the diffuse color.
+                vec3 color = vec3(0.8, 0.8, 0.8);
+                glVertexAttrib4f(m_attributes.diffuseMaterial, color.x, color.y, color.z, 1);
+                
+                // Draw the surface.
+                MeshRef meshRef = (*mesh)->meshRef;
+                TextureRef textureRef = (*mesh)->textureRef;
+                int stride = 11 * sizeof(GLfloat);
+                const GLvoid* normalOffset = (const GLvoid*) (3 * sizeof(GLfloat));
+                const GLvoid* texCoordOffset = (const GLvoid*) (3 * sizeof(vec3));
+                GLint position = m_attributes.position;
+                GLint normal = m_attributes.normal;
+                GLint texCoord = m_attributes.textureCoord;
+                
+                glBindTexture(GL_TEXTURE_2D, textureRef.textureBuffer);
+                glBindBuffer(GL_ARRAY_BUFFER, meshRef.vertexBuffer);
+                glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, 0);
+                glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, normalOffset);
+                glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, stride, texCoordOffset);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshRef.indexBuffer);
+                glDrawElements(GL_TRIANGLES, meshRef.indexCount, GL_UNSIGNED_SHORT, 0);
+            }
+        }
+    }
+    
+    glDisable(GL_BLEND);
     
     /*
     // Replace this

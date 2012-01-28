@@ -12,6 +12,8 @@
 		3719979E14D3F3DB00DA460D /* spaceship.obj in Resources */ = {isa = PBXBuildFile; fileRef = 3719979D14D3F3DB00DA460D /* spaceship.obj */; };
 		371997A114D3F59600DA460D /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371997A014D3F59600DA460D /* Object.cpp */; };
 		371997A414D3F60900DA460D /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371997A314D3F60800DA460D /* Mesh.cpp */; };
+		3751BE6314D45E97009B55EB /* Plane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3751BE6214D45E97009B55EB /* Plane.cpp */; };
+		3751BE6614D46938009B55EB /* TextObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3751BE6514D46938009B55EB /* TextObject.cpp */; };
 		394AFDB91406DE3200678710 /* charmap_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 394AFDB81406DE3200678710 /* charmap_white.png */; };
 		395BAE80140842490097282C /* ButtonB.png in Resources */ = {isa = PBXBuildFile; fileRef = 395BAE77140842490097282C /* ButtonB.png */; };
 		395BAE81140842490097282C /* ButtonBL.png in Resources */ = {isa = PBXBuildFile; fileRef = 395BAE78140842490097282C /* ButtonBL.png */; };
@@ -52,6 +54,10 @@
 		371997A014D3F59600DA460D /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
 		371997A214D3F5EE00DA460D /* Mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mesh.h; sourceTree = "<group>"; };
 		371997A314D3F60800DA460D /* Mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mesh.cpp; sourceTree = "<group>"; };
+		3751BE6114D45E85009B55EB /* Plane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Plane.h; sourceTree = "<group>"; };
+		3751BE6214D45E97009B55EB /* Plane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plane.cpp; sourceTree = "<group>"; };
+		3751BE6414D46927009B55EB /* TextObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextObject.h; sourceTree = "<group>"; };
+		3751BE6514D46938009B55EB /* TextObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextObject.cpp; sourceTree = "<group>"; };
 		394AFDB81406DE3200678710 /* charmap_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = charmap_white.png; sourceTree = "<group>"; };
 		394AFDBA1407231400678710 /* TextView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextView.cpp; sourceTree = "<group>"; };
 		394AFDBC1407232D00678710 /* TextView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TextView.hpp; sourceTree = "<group>"; };
@@ -151,6 +157,8 @@
 			children = (
 				371997A214D3F5EE00DA460D /* Mesh.h */,
 				371997A314D3F60800DA460D /* Mesh.cpp */,
+				3751BE6114D45E85009B55EB /* Plane.h */,
+				3751BE6214D45E97009B55EB /* Plane.cpp */,
 			);
 			name = Meshes;
 			sourceTree = "<group>";
@@ -160,6 +168,8 @@
 			children = (
 				3719979F14D3F56A00DA460D /* Object.h */,
 				371997A014D3F59600DA460D /* Object.cpp */,
+				3751BE6414D46927009B55EB /* TextObject.h */,
+				3751BE6514D46938009B55EB /* TextObject.cpp */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -426,6 +436,8 @@
 				3719979C14D3F1DE00DA460D /* MeshParser.cpp in Sources */,
 				371997A114D3F59600DA460D /* Object.cpp in Sources */,
 				371997A414D3F60900DA460D /* Mesh.cpp in Sources */,
+				3751BE6314D45E97009B55EB /* Plane.cpp in Sources */,
+				3751BE6614D46938009B55EB /* TextObject.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

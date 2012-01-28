@@ -5,6 +5,7 @@
 #include "Matrix.hpp"
 #include "Camera.h"
 #include "Object.h"
+#include "TextObject.h"
 #include <iostream>
 #include <fstream>
 
@@ -31,7 +32,8 @@ private:
     ivec2 m_mainScreenSize;
     DeviceType m_deviceType;
     Camera *m_camera;
-    list<IObject *> m_objects;
+    list<IObject *> m_objects3d;
+    list<IObject *> m_objects2d;
     IRenderingEngine* m_renderingEngine;
     IResourceManager* m_resourceManager;
 };
@@ -55,7 +57,8 @@ ApplicationEngine::ApplicationEngine(DeviceType deviceType, IRenderingEngine* re
     }
     m_renderingEngine = renderingEngine;
     m_resourceManager = resourceManager;
-    m_objects = list<IObject *>(0);
+    m_objects3d = list<IObject *>(0);
+    m_objects2d = list<IObject *>(0);
 }
 
 ApplicationEngine::~ApplicationEngine() {
@@ -67,9 +70,13 @@ void ApplicationEngine::Initialize(int width, int height) {
     m_mainScreenSize = ivec2(width, height);
     
     //add a single test object;
-    Object *newObject = new Object("spaceship.obj", "Background_Iphone.png");
+    IObject *newObject = new Object("spaceship.obj", "Loading_Iphone.png");
     m_renderingEngine->addObject(newObject);
-    m_objects.push_back(newObject);
+    m_objects3d.push_back(newObject);
+    
+    newObject = new TextObject(ivec2(10, 10), ivec2(100, 100));
+    m_renderingEngine->addObject(newObject);
+    m_objects2d.push_back(newObject);
     
     m_camera = new Camera(vec3(0, 0, 0));
     m_renderingEngine->setCamera(m_camera);
@@ -81,7 +88,7 @@ string* ApplicationEngine::GetResourcePath() {
 }
 
 void ApplicationEngine::Render() {
-    m_renderingEngine->render(m_objects);
+    m_renderingEngine->render(m_objects3d, m_objects2d);
 }
 
 void ApplicationEngine::UpdateAnimations(float td) {
