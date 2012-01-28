@@ -8,13 +8,11 @@
 #define NORMAL_OFFSET 3
 #define TEXTURE_OFFSET 9
 
-//namespace ES2
-//{
-
 struct UniformHandles {
     GLuint modelview;
     GLuint projection;
     GLuint normalMatrix;
+    GLuint textureMatrix;
     GLuint lightPosition;
     GLint ambientMaterial;
     GLint specularMaterial;
@@ -29,34 +27,15 @@ struct AttributeHandles {
     GLint textureCoord;
 };
 
-    /*
-struct Mesh {
-    GLuint VertexBuffer;
-    GLuint IndexBuffer;
-    int IndexCount;
-};
-
-struct Texture {
-    GLuint Texture;
-};
-
-struct DrawGroup {
-    vector<Mesh> meshes;
-    vector<Texture> textures;
-    //mat4 Projection;
-    //mat4 Translation;
-    int id;
-};*/
-
 class RenderingEngine : public IRenderingEngine {
 public:
     RenderingEngine(IResourceManager* resourceManager);
     ~RenderingEngine();
     void Initialize(int width, int height);
     void setCamera(ICamera *camera);
-    void addObject3d(IObject3d *obj);
-    void removeObject3d(IObject3d *obj);
-    void render(list<IObject3d *> &objects);
+    void addObject(IObject *obj);
+    void removeObject(IObject *obj);
+    void render(list<IObject *> &objects);
 private:
     GLuint buildShader(string *source, GLenum shaderType) const;
     GLuint buildProgram(string *vShader, string *fShader) const;
@@ -68,33 +47,12 @@ private:
     IResourceManager *m_resourceManager;
     UniformHandles m_uniforms;
     AttributeHandles m_attributes;
-    //GLuint m_testTexture;
     ICamera *m_camera;
-    //list<IObject3d *> m_objectList;
     list<MeshRef> m_meshList;
     list<TextureRef> m_textureList;
     GLuint m_colorRenderbuffer;
     GLuint m_depthRenderbuffer;
     ivec2 m_mainScreenSize;
-    /*
-    void AddGroup(DrawGroup* newGroup, DrawList* list);
-    void RemoveGroup(DrawGroup* group);
-    void SetBlending(BlendMode mode);
-    GLuint BuildShader(string* source, GLenum shaderType) const;
-    GLuint BuildProgram(string* vShader, string* fShader) const;
-    void SetPngTexture(string name) const;
-    IMainView* m_view;
-    BlendMode m_blendMode;
-    vector<DrawGroup> m_drawgroups;
-    ivec2 m_mainScreenSize;
-    GLuint m_colorRenderbuffer;
-    GLuint m_depthRenderbuffer;
-    IResourceManager* m_resourceManager;
-    UniformHandles m_uniforms;
-    AttributeHandels m_attributes;
-    mat4 m_curModelView;
-    int m_listCounter;
-    int m_curGroup;*/
 };
 
 IRenderingEngine* CreateRenderingEngine(IResourceManager* resourceManager)
@@ -145,6 +103,7 @@ void RenderingEngine::Initialize(int width, int height)
     m_uniforms.projection = glGetUniformLocation(program, "Projection");
     m_uniforms.modelview = glGetUniformLocation(program, "Modelview");
     m_uniforms.normalMatrix = glGetUniformLocation(program, "NormalMatrix");
+    m_uniforms.textureMatrix = glGetUniformLocation(program, "TextureMatrix");
     m_uniforms.lightPosition = glGetUniformLocation(program, "LightPosition");
     m_uniforms.ambientMaterial = glGetUniformLocation(program, "AmbientMaterial");
     m_uniforms.specularMaterial = glGetUniformLocation(program, "SpecularMaterial");
@@ -318,7 +277,7 @@ void RenderingEngine::SetBlending(BlendMode mode)
 }
 */
     
-void RenderingEngine::render(list<IObject3d *> &objects)
+void RenderingEngine::render(list<IObject *> &objects)
 {
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -336,7 +295,7 @@ void RenderingEngine::render(list<IObject3d *> &objects)
     vec4 lightPosition(1, 1, 1, 0);
     glUniform3fv(m_uniforms.lightPosition, 1, lightPosition.Pointer());
     
-    list<IObject3d *>::iterator obj;
+    list<IObject *>::iterator obj;
     list<IMesh *> *objMeshes;
     list<IMesh *>::iterator mesh;
     
@@ -351,6 +310,10 @@ void RenderingEngine::render(list<IObject3d *> &objects)
             // Set the normal matrix
             mat3 normalMatrix = modelview.ToMat3();
             glUniformMatrix3fv(m_uniforms.normalMatrix, 1, 0, normalMatrix.Pointer());
+            
+            // Set the texture matrix
+            mat4 texturematrix = (*mesh)->textureMtx;
+            glUniformMatrix4fv(m_uniforms.textureMatrix, 1, 0, texturematrix.Pointer());
             
             // Set the diffuse color.
             vec3 color = vec3(0.8, 0.8, 0.8);
@@ -409,12 +372,6 @@ void RenderingEngine::render(list<IObject3d *> &objects)
         mat4 modelview = visual->Translation * m_curModelView;
         glUniformMatrix4fv(m_uniforms.Modelview, 1, 0, modelview.Pointer());
         
-        //Apply the texture matrix
-        mat4 texturematrix = visual->TextureMatrix;
-        glUniformMatrix4fv(m_uniforms.TextureMatrix, 1, 0, texturematrix.Pointer());
-        //mat4 texturematrixfull = visual->TextureMatrix;
-        //mat2 texturematrix = texturematrixfull.ToMat2();
-        //glUniformMatrix2fv(m_uniforms.TextureMatrix, 1, 0, texturematrix.Pointer());
         
         // Set the normal matrix. (use for lighting)
         //mat3 normalMatrix = modelview.ToMat3();
@@ -494,7 +451,7 @@ GLuint RenderingEngine::buildProgram(string* vertexShaderSource, string* fragmen
 }
     
 
-void RenderingEngine::addObject3d(IObject3d *obj) {
+void RenderingEngine::addObject(IObject *obj) {
     // get meshes from the new object
     list<IMesh *> *objMeshes = obj->getMeshes();
     list<IMesh *>::iterator mesh;
@@ -503,7 +460,7 @@ void RenderingEngine::addObject3d(IObject3d *obj) {
     }
 }
 
-void RenderingEngine::removeObject3d(IObject3d *obj) {
+void RenderingEngine::removeObject(IObject *obj) {
     
 }
 
@@ -573,37 +530,6 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
         TextureRef newTextrueRef(newMesh->getTextureName(), textureID);
         newMesh->textureRef = newTextrueRef;
         m_textureList.push_back(newTextrueRef);
-        
-        
-        // Add the texture to the group
-        //Texture newTexture = Texture();
-        //newTexture.Texture = textureID;
-        //newGroup->textures.push_back(newTexture);
-        
-        /*
-        // Get the texture
-        ImageData *imageData = m_resourceManager->loadBMPImage(newMesh->getTextureName());
-        if (imageData == NULL) {
-            cout << "Could not load image: " << newMesh->getTextureName() << "\n";
-            return;
-        }
-        
-        // Load a new texture.
-        GLuint textureBuffer;
-        glGenTextures(1, &textureBuffer);
-        glBindTexture(GL_TEXTURE_2D, textureBuffer);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageData->size.x, imageData->size.y, 0,
-                     GL_BGRA, GL_UNSIGNED_BYTE, imageData->pixels);
-        delete imageData;
-        m_resourceManager->unLoadImage();
-        glGenerateMipmapEXT(GL_TEXTURE_2D);
-        
-        // Setup a new texture reference
-        TextureRef newTextrueRef(newMesh->getTextureName(), textureBuffer);
-        newMesh->textureRef = newTextrueRef;
-        m_textureList.push_back(newTextrueRef);*/
     }
 }
 
@@ -651,8 +577,7 @@ list<TextureRef>::iterator RenderingEngine::findTextureRef(TextureRef texture) {
     return curTexture;
 }
 
-void RenderingEngine::setPngTexture(string name) const
-{
+void RenderingEngine::setPngTexture(string name) const {
     TextureDescription description = m_resourceManager->LoadPngImage(name);
     
     GLenum format;
@@ -691,5 +616,3 @@ void RenderingEngine::setPngTexture(string name) const
     glTexImage2D(GL_TEXTURE_2D, 0, format, size.x, size.y, 0, format, type, data);
     m_resourceManager->UnloadImage();
 }
-
-//}

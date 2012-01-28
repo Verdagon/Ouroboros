@@ -9,14 +9,6 @@ using std::vector;
 using std::list;
 using std::string;
 
-/*
-enum BlendMode {
-    BlendModeNone,
-    BlendModeDepth,
-    BlendModeDepthLights,
-    BlendModeBlend,
-};*/
-
 enum DeviceType {
     DeviceTypeIphone,
     DeviceTypeIpod,
@@ -103,20 +95,14 @@ struct ImageData {
     ivec2 size;
 };
 
-/*
-enum StateType {
-    StateTypeStatic,
-    StateTypeMoving,
-    StateTypeGame,
-};*/
-
 struct IMesh {
-    MeshRef meshRef;   // References used by render engine
+    MeshRef meshRef;       // References used by render engine
     TextureRef textureRef;
-    mat4 meshMtx;        // Matrix used by render engine
-    vec3 mean, min, max; // Bounding box.
+    mat4 meshMtx;          // Matrix used by render engine
+    mat4 textureMtx;
+    vec3 mean, min, max;   // Bounding box.
     vec4 color;
-    float size;        // the size to load the mesh as.
+    float size;            // the size to load the mesh as.
     LOAD_NORMAL_TYPE normalType;
     
     // File name and Mesh type
@@ -130,100 +116,21 @@ struct IMesh {
     virtual ~IMesh() {}
 };
 
-struct IObject3d {
+struct IObject {
     virtual list<IMesh *>* getMeshes() = 0;
 };
 
 struct ICamera {
-    vec3 fwd;
-    vec3 eye;
-    vec3 ref;
-    vec3 up;
+    vec3 fwd; // direction vector of the camera.
+    vec3 eye; // eye location of the camera.
+    vec3 ref; // reference point the camera looks at.
+    vec3 up;  // up vector for the camera (controls roll.
 };
-
-struct DrawList {
-    //mat4 Projection;
-    //mat4 Translation;
-    vector<IMesh*> Meshes;
-    vector<string> Textures;
-    
-    // Find something better
-    bool Plane;
-    int PlaneIndex;
-    bool CharMap;
-    int CharMapIndex;
-    bool Button;
-    int ButtonIndex;
-    
-    int group;
-    int id;
-};
-
-/*
-struct Visual {
-    BlendMode Mode;
-    mat4 Translation;
-    mat4 TextureMatrix;
-    int Mesh;
-    int Texture;
-    int Group;
-    
-    //Not used by render engine
-    vec3 Location;
-    Quaternion Orientation;
-    float Scale;
-};
-
-struct IMap {
-    string* ResourcePath;
-    string* Map;
-    vector<string>* Meshes;
-    vector<string>* Textures;
-    vector<Visual>* Visuals;
-    Visual BallVisual;
-    vec3 ViewLoc;
-};
-
-struct IView {
-    virtual void GetVisuals(vector<Visual>* visuals) = 0;
-    virtual void GetDrawList(DrawList* drawList) = 0;
-    virtual void AddSubview(IView* subview) = 0;
-    virtual void ClearSubviews() = 0;
-    virtual mat4 GetProjection() = 0;
-    virtual mat4 GetTranslation() = 0;
-};
-
-struct IController {
-    virtual void OnFingerUp(vec2 location) = 0;
-    virtual void OnFingerDown(vec2 location) = 0;
-    virtual void OnFingerMove(vector<vec2> touches) = 0;
-    virtual void Tic(float td) = 0;
-};
-
-struct IState {
-    virtual StateType GetType() = 0;
-    virtual IView* GetBackGroundView() = 0;
-    virtual IView* GetForeGroundView() = 0;
-    virtual void UpdateAnimations(float td) = 0;
-};
-
-struct IMainView {
-    virtual void GetVisuals(vector<Visual>* visuals) = 0;
-    virtual void GetLists(vector<DrawList*>* list) = 0;
-    virtual void SetStateViews(IState* state) = 0;
-    virtual mat4 GetProjection(int group) = 0;
-    virtual mat4 GetTranslation(int group) = 0;
-};*/
 
 struct IApplicationEngine {
     //Initalize the game (update to signal using ipad or iphone)
     virtual void Initialize(int width, int height) = 0;
-    
-    //Use to switch controllers
     virtual string* GetResourcePath() = 0;
-    //virtual void SetController(IController *controller) = 0;
-    //virtual void SetState(IState* state) = 0;
-    //virtual IState* GetState() = 0;
     
     //Render the current frame
     virtual void Render() = 0;
@@ -245,17 +152,15 @@ struct IApplicationEngine {
     
     //Information for views
     virtual ivec2* GetScreenSize() = 0;
-    
-    //Destructor
     virtual ~IApplicationEngine() {}
 };
 
 struct IRenderingEngine {
     virtual void Initialize(int width, int height) = 0;
     virtual void setCamera(ICamera *camera) = 0;
-    virtual void addObject3d(IObject3d *obj) = 0;
-    virtual void removeObject3d(IObject3d *obj) = 0;
-    virtual void render(list<IObject3d *> &objects) = 0;
+    virtual void addObject(IObject *obj) = 0;      // Before any object can be renderd it needs to be added by this method.
+    virtual void removeObject(IObject *obj) = 0;   // Removes the object from the rendering engine.
+    virtual void render(list<IObject *> &objects) = 0;
     virtual ~IRenderingEngine() {}
 };
 
@@ -289,5 +194,4 @@ IResourceManager* CreateResourceManager();
 IApplicationEngine* CreateApplicationEngine(DeviceType deviceType, IRenderingEngine* renderingEngine, IResourceManager* resourceManager);
 
 IRenderingEngine* CreateRenderingEngine(IResourceManager* resourceManager);
-//namespace ES1 { IRenderingEngine* CreateRenderingEngine(IResourceManager* resourceManager); }
-//namespace ES2 { IRenderingEngine* CreateRenderingEngine(IResourceManager* resourceManager); }
+

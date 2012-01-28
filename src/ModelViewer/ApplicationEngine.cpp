@@ -4,9 +4,7 @@
 #include "Interfaces.h"
 #include "Matrix.hpp"
 #include "Camera.h"
-#include "Object3d.h"
-//#include "MainView.hpp"
-//#include "MainMenu.hpp"
+#include "Object.h"
 #include <iostream>
 #include <fstream>
 
@@ -17,13 +15,7 @@ public:
     ApplicationEngine(DeviceType deviceType, IRenderingEngine* renderingEngine, IResourceManager* resourceManager);
     ~ApplicationEngine();
     void Initialize(int width, int height);
-    
-    //Used by controllers
     string* GetResourcePath();
-    //void SetController(IController *controller);
-    //void SetState(IState* state);
-    //IState* GetState();
-    
     void OnFingerUp(vec2 location);
     void OnFingerDown(vec2 location);
     void OnFingerMove(vector<vec2> touches);
@@ -39,11 +31,7 @@ private:
     ivec2 m_mainScreenSize;
     DeviceType m_deviceType;
     Camera *m_camera;
-    list<IObject3d *> m_objects;
-    //MainView* m_mainView;
-    //IController* m_curController;
-    //IController* m_lastController;
-    //IState* m_curState;
+    list<IObject *> m_objects;
     IRenderingEngine* m_renderingEngine;
     IResourceManager* m_resourceManager;
 };
@@ -67,10 +55,7 @@ ApplicationEngine::ApplicationEngine(DeviceType deviceType, IRenderingEngine* re
     }
     m_renderingEngine = renderingEngine;
     m_resourceManager = resourceManager;
-    m_objects = list<IObject3d *>(0);
-    //m_curController = NULL;
-    //m_lastController = NULL;
-    //m_curState = NULL;
+    m_objects = list<IObject *>(0);
 }
 
 ApplicationEngine::~ApplicationEngine() {
@@ -82,8 +67,8 @@ void ApplicationEngine::Initialize(int width, int height) {
     m_mainScreenSize = ivec2(width, height);
     
     //add a single test object;
-    Object3d *newObject = new Object3d("spaceship.obj", "Background_Iphone.png");
-    m_renderingEngine->addObject3d(newObject);
+    Object *newObject = new Object("spaceship.obj", "Background_Iphone.png");
+    m_renderingEngine->addObject(newObject);
     m_objects.push_back(newObject);
     
     m_camera = new Camera(vec3(0, 0, 0));
@@ -94,24 +79,6 @@ void ApplicationEngine::Initialize(int width, int height) {
 string* ApplicationEngine::GetResourcePath() {
     return m_resourceManager->GetResourcePath();
 }
-
-/*
-void  ApplicationEngine::SetController(IController *controller) {
-    delete m_lastController;
-    m_lastController = m_curController;
-    m_curController = controller;
-    m_renderingEngine->ReLoadLists();
-}
-
-void ApplicationEngine::SetState(IState *state) {
-    m_mainView->SetStateViews(state);
-    delete m_curState;
-    m_curState = state;
-}
-
-IState* ApplicationEngine::GetState() {
-    return m_curState;
-}*/
 
 void ApplicationEngine::Render() {
     m_renderingEngine->render(m_objects);

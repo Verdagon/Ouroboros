@@ -10,7 +10,7 @@
 		3719979814D3EF5800DA460D /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3719979714D3EF5800DA460D /* Camera.cpp */; };
 		3719979C14D3F1DE00DA460D /* MeshParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3719979B14D3F1DE00DA460D /* MeshParser.cpp */; };
 		3719979E14D3F3DB00DA460D /* spaceship.obj in Resources */ = {isa = PBXBuildFile; fileRef = 3719979D14D3F3DB00DA460D /* spaceship.obj */; };
-		371997A114D3F59600DA460D /* Object3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371997A014D3F59600DA460D /* Object3d.cpp */; };
+		371997A114D3F59600DA460D /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371997A014D3F59600DA460D /* Object.cpp */; };
 		371997A414D3F60900DA460D /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371997A314D3F60800DA460D /* Mesh.cpp */; };
 		394AFDB91406DE3200678710 /* charmap_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 394AFDB81406DE3200678710 /* charmap_white.png */; };
 		395BAE80140842490097282C /* ButtonB.png in Resources */ = {isa = PBXBuildFile; fileRef = 395BAE77140842490097282C /* ButtonB.png */; };
@@ -48,12 +48,10 @@
 		3719979A14D3F1CD00DA460D /* MeshParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshParser.h; sourceTree = "<group>"; };
 		3719979B14D3F1DE00DA460D /* MeshParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeshParser.cpp; sourceTree = "<group>"; };
 		3719979D14D3F3DB00DA460D /* spaceship.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spaceship.obj; sourceTree = "<group>"; };
-		3719979F14D3F56A00DA460D /* Object3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object3d.h; sourceTree = "<group>"; };
-		371997A014D3F59600DA460D /* Object3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object3d.cpp; sourceTree = "<group>"; };
+		3719979F14D3F56A00DA460D /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
+		371997A014D3F59600DA460D /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
 		371997A214D3F5EE00DA460D /* Mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mesh.h; sourceTree = "<group>"; };
 		371997A314D3F60800DA460D /* Mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mesh.cpp; sourceTree = "<group>"; };
-		3912055B14104CAC00191A3B /* Model.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Model.hpp; sourceTree = "<group>"; };
-		3912055C14104CB900191A3B /* Model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Model.cpp; sourceTree = "<group>"; };
 		394AFDB81406DE3200678710 /* charmap_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = charmap_white.png; sourceTree = "<group>"; };
 		394AFDBA1407231400678710 /* TextView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextView.cpp; sourceTree = "<group>"; };
 		394AFDBC1407232D00678710 /* TextView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TextView.hpp; sourceTree = "<group>"; };
@@ -73,8 +71,6 @@
 		39C8597013C66501008DE491 /* Simple.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = Simple.vert; sourceTree = "<group>"; };
 		39CDA44713FF3FFE00958D83 /* MainView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainView.cpp; sourceTree = "<group>"; };
 		39CDA44A13FF427E00958D83 /* MainView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MainView.hpp; sourceTree = "<group>"; };
-		39CDA44B13FF45C000958D83 /* Plane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plane.cpp; sourceTree = "<group>"; };
-		39CDA44D13FF45D000958D83 /* Plane.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Plane.hpp; sourceTree = "<group>"; };
 		39CDA44F13FF473C00958D83 /* Background_Iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Background_Iphone.png; sourceTree = "<group>"; };
 		39E90ACE13C4D5B600D5035E /* Ouroboros.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ouroboros.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39E90AD213C4D5B600D5035E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -122,6 +118,7 @@
 		3719979514D3EF2F00DA460D /* ApplicationEngine */ = {
 			isa = PBXGroup;
 			children = (
+				3751BE6014D42637009B55EB /* Objects */,
 				3719979614D3EF4C00DA460D /* Camera.h */,
 				3719979714D3EF5800DA460D /* Camera.cpp */,
 				39E90B0313C4DF8000D5035E /* ApplicationEngine.cpp */,
@@ -139,22 +136,32 @@
 			name = ResourceManager;
 			sourceTree = "<group>";
 		};
-		3912055314102C3800191A3B /* Maps */ = {
+		3751BE5E14D425E0009B55EB /* RenderingEngine */ = {
 			isa = PBXGroup;
 			children = (
+				39E90B1A13C514E800D5035E /* Shaders */,
+				3751BE5F14D42623009B55EB /* Meshes */,
+				39E90B1B13C5159300D5035E /* RenderingEngine.cpp */,
 			);
-			name = Maps;
+			name = RenderingEngine;
 			sourceTree = "<group>";
 		};
-		3912055A14104C6200191A3B /* Meshes */ = {
+		3751BE5F14D42623009B55EB /* Meshes */ = {
 			isa = PBXGroup;
 			children = (
-				39CDA44D13FF45D000958D83 /* Plane.hpp */,
-				39CDA44B13FF45C000958D83 /* Plane.cpp */,
-				3912055B14104CAC00191A3B /* Model.hpp */,
-				3912055C14104CB900191A3B /* Model.cpp */,
+				371997A214D3F5EE00DA460D /* Mesh.h */,
+				371997A314D3F60800DA460D /* Mesh.cpp */,
 			);
 			name = Meshes;
+			sourceTree = "<group>";
+		};
+		3751BE6014D42637009B55EB /* Objects */ = {
+			isa = PBXGroup;
+			children = (
+				3719979F14D3F56A00DA460D /* Object.h */,
+				371997A014D3F59600DA460D /* Object.cpp */,
+			);
+			name = Objects;
 			sourceTree = "<group>";
 		};
 		391205771410510200191A3B /* Models */ = {
@@ -170,7 +177,6 @@
 			children = (
 				39CDA44E13FF472700958D83 /* Images */,
 				391205771410510200191A3B /* Models */,
-				3912055314102C3800191A3B /* Maps */,
 			);
 			name = ArtAssets;
 			sourceTree = "<group>";
@@ -257,17 +263,11 @@
 			children = (
 				391205911410516700191A3B /* ArtAssets */,
 				392F25F31405B2AF003EA078 /* Views */,
-				39E90B0D13C4F45700D5035E /* Interfaces.h */,
 				3719979914D3F19500DA460D /* ResourceManager */,
 				3719979514D3EF2F00DA460D /* ApplicationEngine */,
-				39E90B1B13C5159300D5035E /* RenderingEngine.cpp */,
-				3719979F14D3F56A00DA460D /* Object3d.h */,
-				371997A014D3F59600DA460D /* Object3d.cpp */,
-				371997A214D3F5EE00DA460D /* Mesh.h */,
-				371997A314D3F60800DA460D /* Mesh.cpp */,
-				3912055A14104C6200191A3B /* Meshes */,
+				3751BE5E14D425E0009B55EB /* RenderingEngine */,
+				39E90B0D13C4F45700D5035E /* Interfaces.h */,
 				39E90B0E13C4F46A00D5035E /* ObjectiveC */,
-				39E90B1A13C514E800D5035E /* Shaders */,
 				39E90AD913C4D5B600D5035E /* Supporting Files */,
 				39E90AD113C4D5B600D5035E /* Frameworks */,
 			);
@@ -424,7 +424,7 @@
 				39E90B0813C4DFC900D5035E /* ResourceManager.mm in Sources */,
 				3719979814D3EF5800DA460D /* Camera.cpp in Sources */,
 				3719979C14D3F1DE00DA460D /* MeshParser.cpp in Sources */,
-				371997A114D3F59600DA460D /* Object3d.cpp in Sources */,
+				371997A114D3F59600DA460D /* Object.cpp in Sources */,
 				371997A414D3F60900DA460D /* Mesh.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

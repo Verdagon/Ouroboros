@@ -6,6 +6,7 @@ Mesh::Mesh(string meshName, string textureName) {
     m_textureName = textureName;
     meshRef = MeshRef();
     meshMtx = mat4::Identity();
+    textureMtx =  mat4::Identity();
     color = vec4(0.8, 0.8, 0.8, 1.0);
     normalType = LOAD_NORMAL_VERTEX;
     size = 1;

@@ -6,6 +6,7 @@ attribute vec2 TextureCoord;
 uniform mat4 Projection;
 uniform mat4 Modelview;
 uniform mat3 NormalMatrix;
+uniform mat4 TextureMatrix;
 uniform vec3 LightPosition;
 uniform vec3 AmbientMaterial;
 uniform vec3 SpecularMaterial;
@@ -29,5 +30,6 @@ void main(void)
    
    DestinationColor = vec4(color, 1);
    gl_Position = Projection * Modelview * Position;
-   TextureCoordOut = TextureCoord;
+   vec4 Coord = TextureMatrix * vec4(TextureCoord, 1, 1);
+   TextureCoordOut = vec2(Coord);
 }
