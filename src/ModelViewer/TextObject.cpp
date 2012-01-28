@@ -11,7 +11,7 @@ TextObject::TextObject(ivec2 dimensions, ivec2 loc) {
     m_loc = loc;
     m_meshList = list<IMesh *>(0);
     //push in one plane 
-    m_plane = new Plane("charmap_white.png", vec3(10, 10, 0), vec3(loc.x, loc.y, -10));
+    m_plane = new Plane("charmap_white.png", vec3(100, 100, 0), vec3(loc.x, loc.y, 0));
     //m_plane->display = false;
 }
 

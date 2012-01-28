@@ -343,7 +343,7 @@ void RenderingEngine::render(list<IObject *> &objects3d, list<IObject *> &object
     
     glDisable(GL_DEPTH_TEST);
     
-    projectionMatrix = mat4::Parallel(0, m_mainScreenSize.x, 0, m_mainScreenSize.y, 0, 10);
+    projectionMatrix = mat4::Parallel(-m_mainScreenSize.x/2, m_mainScreenSize.x/2, -m_mainScreenSize.y/2, m_mainScreenSize.y/2, 0, 10);
     glUniformMatrix4fv(m_uniforms.projection, 1, 0, projectionMatrix.Pointer());
     
     glEnable(GL_BLEND);

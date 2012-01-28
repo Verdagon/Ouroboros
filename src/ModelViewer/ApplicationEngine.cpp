@@ -74,7 +74,7 @@ void ApplicationEngine::Initialize(int width, int height) {
     m_renderingEngine->addObject(newObject);
     m_objects3d.push_back(newObject);
     
-    newObject = new TextObject(ivec2(10, 10), ivec2(100, 100));
+    newObject = new TextObject(ivec2(10, 10), ivec2(0, 0));
     m_renderingEngine->addObject(newObject);
     m_objects2d.push_back(newObject);
     
