@@ -4,6 +4,10 @@
 #include "Interfaces.h"
 #include "Plane.h"
 
+#define SIZE 40
+#define SCALE 0.125
+#define WORD_TOTAL_SIZE 32
+
 class TextObject : public IObject {
 public:
     TextObject();
