@@ -7,8 +7,6 @@ MainView::MainView(DeviceType device, int width, int height) {
     m_loadingList = new DrawList();
     m_loadingList->id = -1;
     m_loadingList->group = 0;
-    //m_loadingList->Projection = mat4::Parallel(-width/2, width/2, -height/2, height/2, 5, 20);
-    //m_loadingList->Translation = mat4::Identity();
     m_loadingList->Meshes.push_back(new Plane(width, height));
     m_loadingList->Textures.push_back("Loading_Iphone.png");
     

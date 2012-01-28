@@ -2,7 +2,7 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 
-struct IRenderingEngine;
+//struct IRenderingEngine;
 
 @interface GLView : UIView {
 @private
