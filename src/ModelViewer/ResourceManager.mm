@@ -12,7 +12,8 @@
 #import <string>
 #import <iostream>
 #import <fstream>
-#import "Interfaces.hpp"
+#import "Interfaces.h"
+#import "MeshParser.h"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ public:
     ResourceManager();
     ~ResourceManager();
     string* GetResourcePath();
+    MeshData* readMeshData(string fileName, LOAD_NORMAL_TYPE normalType, float scale);
     TextureDescription LoadPngImage(string filename);
     void* GetImageData()
     {
@@ -58,7 +60,8 @@ IResourceManager* CreateResourceManager() {
 ResourceManager::ResourceManager() {
     m_vshader = NULL;
     m_fshader = NULL;
-    m_path = NULL;
+    NSString* bundlePath =[[NSBundle mainBundle] resourcePath];
+    m_path = new string([bundlePath UTF8String]);
 }
 
 ResourceManager::~ResourceManager() {
@@ -69,11 +72,16 @@ ResourceManager::~ResourceManager() {
 
 
 string* ResourceManager::GetResourcePath() {
-    if (m_path == NULL) {
-        NSString* bundlePath =[[NSBundle mainBundle] resourcePath];
-        m_path = new string([bundlePath UTF8String]);
-    }
     return m_path;
+}
+
+MeshData* ResourceManager::readMeshData(string fileName, LOAD_NORMAL_TYPE normalType, float scale) {
+    NSString *path = [[NSBundle mainBundle]bundlePath];
+    NSString *name = [[NSString alloc] initWithUTF8String:fileName.c_str()];
+    NSString* fullPath = [path stringByAppendingPathComponent:name];
+    [name release];
+    string fullFileName = string([fullPath UTF8String]);
+    return loadMesh(fullFileName, normalType, scale);
 }
 
 TextureDescription ResourceManager::LoadPngImage(string filename) {

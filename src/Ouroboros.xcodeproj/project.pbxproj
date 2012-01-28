@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3719979814D3EF5800DA460D /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3719979714D3EF5800DA460D /* Camera.cpp */; };
+		3719979C14D3F1DE00DA460D /* MeshParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3719979B14D3F1DE00DA460D /* MeshParser.cpp */; };
+		3719979E14D3F3DB00DA460D /* spaceship.obj in Resources */ = {isa = PBXBuildFile; fileRef = 3719979D14D3F3DB00DA460D /* spaceship.obj */; };
+		371997A114D3F59600DA460D /* Object3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371997A014D3F59600DA460D /* Object3d.cpp */; };
+		371997A414D3F60900DA460D /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371997A314D3F60800DA460D /* Mesh.cpp */; };
 		394AFDB91406DE3200678710 /* charmap_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 394AFDB81406DE3200678710 /* charmap_white.png */; };
 		395BAE80140842490097282C /* ButtonB.png in Resources */ = {isa = PBXBuildFile; fileRef = 395BAE77140842490097282C /* ButtonB.png */; };
 		395BAE81140842490097282C /* ButtonBL.png in Resources */ = {isa = PBXBuildFile; fileRef = 395BAE78140842490097282C /* ButtonBL.png */; };
@@ -38,6 +43,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3719979614D3EF4C00DA460D /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
+		3719979714D3EF5800DA460D /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
+		3719979A14D3F1CD00DA460D /* MeshParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshParser.h; sourceTree = "<group>"; };
+		3719979B14D3F1DE00DA460D /* MeshParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeshParser.cpp; sourceTree = "<group>"; };
+		3719979D14D3F3DB00DA460D /* spaceship.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spaceship.obj; sourceTree = "<group>"; };
+		3719979F14D3F56A00DA460D /* Object3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object3d.h; sourceTree = "<group>"; };
+		371997A014D3F59600DA460D /* Object3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object3d.cpp; sourceTree = "<group>"; };
+		371997A214D3F5EE00DA460D /* Mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mesh.h; sourceTree = "<group>"; };
+		371997A314D3F60800DA460D /* Mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mesh.cpp; sourceTree = "<group>"; };
 		3912055B14104CAC00191A3B /* Model.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Model.hpp; sourceTree = "<group>"; };
 		3912055C14104CB900191A3B /* Model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Model.cpp; sourceTree = "<group>"; };
 		394AFDB81406DE3200678710 /* charmap_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = charmap_white.png; sourceTree = "<group>"; };
@@ -85,7 +99,7 @@
 		39E90B0913C4F31500D5035E /* Matrix.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Matrix.hpp; sourceTree = "<group>"; };
 		39E90B0A13C4F34800D5035E /* Vector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Vector.hpp; sourceTree = "<group>"; };
 		39E90B0B13C4F37800D5035E /* Quaternion.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Quaternion.hpp; sourceTree = "<group>"; };
-		39E90B0D13C4F45700D5035E /* Interfaces.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Interfaces.hpp; sourceTree = "<group>"; };
+		39E90B0D13C4F45700D5035E /* Interfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interfaces.h; sourceTree = "<group>"; };
 		39E90B1B13C5159300D5035E /* RenderingEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderingEngine.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -105,6 +119,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3719979514D3EF2F00DA460D /* ApplicationEngine */ = {
+			isa = PBXGroup;
+			children = (
+				3719979614D3EF4C00DA460D /* Camera.h */,
+				3719979714D3EF5800DA460D /* Camera.cpp */,
+				39E90B0313C4DF8000D5035E /* ApplicationEngine.cpp */,
+			);
+			name = ApplicationEngine;
+			sourceTree = "<group>";
+		};
+		3719979914D3F19500DA460D /* ResourceManager */ = {
+			isa = PBXGroup;
+			children = (
+				39E90B0713C4DFC900D5035E /* ResourceManager.mm */,
+				3719979A14D3F1CD00DA460D /* MeshParser.h */,
+				3719979B14D3F1DE00DA460D /* MeshParser.cpp */,
+			);
+			name = ResourceManager;
+			sourceTree = "<group>";
+		};
 		3912055314102C3800191A3B /* Maps */ = {
 			isa = PBXGroup;
 			children = (
@@ -126,6 +160,7 @@
 		391205771410510200191A3B /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				3719979D14D3F3DB00DA460D /* spaceship.obj */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -222,9 +257,14 @@
 			children = (
 				391205911410516700191A3B /* ArtAssets */,
 				392F25F31405B2AF003EA078 /* Views */,
-				39E90B0D13C4F45700D5035E /* Interfaces.hpp */,
+				39E90B0D13C4F45700D5035E /* Interfaces.h */,
+				3719979914D3F19500DA460D /* ResourceManager */,
+				3719979514D3EF2F00DA460D /* ApplicationEngine */,
 				39E90B1B13C5159300D5035E /* RenderingEngine.cpp */,
-				39E90B0313C4DF8000D5035E /* ApplicationEngine.cpp */,
+				3719979F14D3F56A00DA460D /* Object3d.h */,
+				371997A014D3F59600DA460D /* Object3d.cpp */,
+				371997A214D3F5EE00DA460D /* Mesh.h */,
+				371997A314D3F60800DA460D /* Mesh.cpp */,
 				3912055A14104C6200191A3B /* Meshes */,
 				39E90B0E13C4F46A00D5035E /* ObjectiveC */,
 				39E90B1A13C514E800D5035E /* Shaders */,
@@ -280,7 +320,6 @@
 			children = (
 				39E90AE413C4D5B600D5035E /* iPhone */,
 				39E90AEB13C4D5B600D5035E /* iPad */,
-				39E90B0713C4DFC900D5035E /* ResourceManager.mm */,
 				39E90AFD13C4DA8000D5035E /* GLView.h */,
 				39E90AFE13C4DA8000D5035E /* GLView.mm */,
 				39E90AE113C4D5B600D5035E /* AppDelegate.h */,
@@ -364,6 +403,7 @@
 				395BAE87140842490097282C /* ButtonTL.png in Resources */,
 				395BAE88140842490097282C /* ButtonTR.png in Resources */,
 				395BAE8A140842D00097282C /* ButtonT.png in Resources */,
+				3719979E14D3F3DB00DA460D /* spaceship.obj in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,6 +422,10 @@
 				39E90AFF13C4DA8000D5035E /* GLView.mm in Sources */,
 				39E90B0513C4DF8000D5035E /* ApplicationEngine.cpp in Sources */,
 				39E90B0813C4DFC900D5035E /* ResourceManager.mm in Sources */,
+				3719979814D3EF5800DA460D /* Camera.cpp in Sources */,
+				3719979C14D3F1DE00DA460D /* MeshParser.cpp in Sources */,
+				371997A114D3F59600DA460D /* Object3d.cpp in Sources */,
+				371997A414D3F60900DA460D /* Mesh.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

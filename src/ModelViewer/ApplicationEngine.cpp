@@ -1,8 +1,10 @@
 #ifndef APPLICATIONENGINE_H
 #define APPLICATIONENGINE_H
 
-#include "Interfaces.hpp"
+#include "Interfaces.h"
 #include "Matrix.hpp"
+#include "Camera.h"
+#include "Object3d.h"
 //#include "MainView.hpp"
 //#include "MainMenu.hpp"
 #include <iostream>
@@ -25,7 +27,7 @@ public:
     void OnFingerUp(vec2 location);
     void OnFingerDown(vec2 location);
     void OnFingerMove(vector<vec2> touches);
-    void Render() const;
+    void Render();
     void UpdateAnimations(float td);
     void AppWillResignActive();
     void AppWillBecomeActive();
@@ -36,6 +38,8 @@ public:
 private:
     ivec2 m_mainScreenSize;
     DeviceType m_deviceType;
+    Camera *m_camera;
+    list<IObject3d *> m_objects;
     //MainView* m_mainView;
     //IController* m_curController;
     //IController* m_lastController;
@@ -63,6 +67,7 @@ ApplicationEngine::ApplicationEngine(DeviceType deviceType, IRenderingEngine* re
     }
     m_renderingEngine = renderingEngine;
     m_resourceManager = resourceManager;
+    m_objects = list<IObject3d *>(0);
     //m_curController = NULL;
     //m_lastController = NULL;
     //m_curState = NULL;
@@ -76,15 +81,14 @@ ApplicationEngine::~ApplicationEngine() {
 void ApplicationEngine::Initialize(int width, int height) {
     m_mainScreenSize = ivec2(width, height);
     
-    //Initalize the main view
-    //m_mainView = new MainView(m_deviceType, width, height);
+    //add a single test object;
+    Object3d *newObject = new Object3d("spaceship.obj", "Background_Iphone.png");
+    m_renderingEngine->addObject3d(newObject);
+    m_objects.push_back(newObject);
     
-    //Initalize the rendering engine
-    //m_renderingEngine->Initialize(m_mainView, width, height);
+    m_camera = new Camera(vec3(0, 0, 0));
+    m_renderingEngine->setCamera(m_camera);
     m_renderingEngine->Initialize(width, height);
-    
-    //Initalize Screen and Game Controllers here
-    //SetController(new MainMenu(this));
 }
 
 string* ApplicationEngine::GetResourcePath() {
@@ -109,9 +113,8 @@ IState* ApplicationEngine::GetState() {
     return m_curState;
 }*/
 
-void ApplicationEngine::Render() const {
-    list<IObject3d *> objectList(0);
-    m_renderingEngine->render(objectList);
+void ApplicationEngine::Render() {
+    m_renderingEngine->render(m_objects);
 }
 
 void ApplicationEngine::UpdateAnimations(float td) {

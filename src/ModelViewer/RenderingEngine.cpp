@@ -1,6 +1,6 @@
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
-#include "Interfaces.hpp"
+#include "Interfaces.h"
 #include "Matrix.hpp"
 #include <iostream>
 
@@ -60,10 +60,11 @@ public:
 private:
     GLuint buildShader(string *source, GLenum shaderType) const;
     GLuint buildProgram(string *vShader, string *fShader) const;
-    //void loadMesh(IMesh *newMesh);
+    void loadMesh(IMesh *newMesh);
     //void unLoadMesh(IMesh *rmvMesh);
-    //list<MeshRef>::iterator findMeshRef(MeshRef mesh);
-    //list<TextureRef>::iterator findTextureRef(TextureRef texture);
+    list<MeshRef>::iterator findMeshRef(MeshRef mesh);
+    list<TextureRef>::iterator findTextureRef(TextureRef texture);
+    void setPngTexture(string name) const;
     IResourceManager *m_resourceManager;
     UniformHandles m_uniforms;
     AttributeHandles m_attributes;
@@ -150,11 +151,12 @@ void RenderingEngine::Initialize(int width, int height)
     m_uniforms.shininess = glGetUniformLocation(program, "Shininess"); 
     m_uniforms.sampler = glGetUniformLocation(program, "Sampler");
     
-    // Initialize various state.
+    // Initialize various states.
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnableVertexAttribArray(m_attributes.position);
     glEnableVertexAttribArray(m_attributes.normal);
     glEnableVertexAttribArray(m_attributes.textureCoord);
+    glEnable(GL_DEPTH_TEST);
     
     // Set up some default material parameters.
     glUniform3f(m_uniforms.ambientMaterial, 0.4f, 0.4f, 0.4f);
@@ -164,12 +166,10 @@ void RenderingEngine::Initialize(int width, int height)
     // set a texture
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(m_uniforms.sampler, 0);
-    
-    glEnable(GL_DEPTH_TEST);
 }
 
 void RenderingEngine::setCamera(ICamera *camera) {
-    
+    m_camera = camera;
 }
 
 /*
@@ -323,7 +323,8 @@ void RenderingEngine::render(list<IObject3d *> &objects)
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    /*
+    glViewport(0, 0, m_mainScreenSize.x, m_mainScreenSize.y);
+    
     // Set the projection matrix
     float h = 4.0f * m_mainScreenSize.x / m_mainScreenSize.y;
     
@@ -373,7 +374,7 @@ void RenderingEngine::render(list<IObject3d *> &objects)
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshRef.indexBuffer);
             glDrawElements(GL_TRIANGLES, meshRef.indexCount, GL_UNSIGNED_SHORT, 0);
         }
-    }*/
+    }
     
     
     
@@ -494,18 +495,19 @@ GLuint RenderingEngine::buildProgram(string* vertexShaderSource, string* fragmen
     
 
 void RenderingEngine::addObject3d(IObject3d *obj) {
-    
+    // get meshes from the new object
+    list<IMesh *> *objMeshes = obj->getMeshes();
+    list<IMesh *>::iterator mesh;
+    for (mesh = objMeshes->begin(); mesh != objMeshes->end(); ++mesh) {
+        loadMesh(*mesh);
+    }
 }
 
 void RenderingEngine::removeObject3d(IObject3d *obj) {
     
 }
-/*
+
 void RenderingEngine::loadMesh(IMesh *newMesh) {
-    //if (newMesh->meshRef.name != "") {
-    //return;
-    //}
-    
     list<MeshRef>::iterator meshRef = findMeshRef(newMesh->meshRef);
     //list<MeshRef>::iterator meshRef = m_meshList.begin();
     //find(meshRef, m_meshList.end(), newMesh->meshRef);
@@ -518,7 +520,7 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
         MeshData *meshData;
         meshData = newMesh->getMeshData();
         if (meshData == NULL) {
-            meshData = ResourceManager::readMeshData(newMesh->getMeshName(), newMesh->normalType, newMesh->size);
+            meshData = m_resourceManager->readMeshData(newMesh->getMeshName(), newMesh->normalType, newMesh->size);
             if (meshData == NULL) {
                 std::cout << "Could not read file: " << newMesh->getMeshName() << "\n";
                 return;
@@ -556,7 +558,29 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
         newMesh->textureRef = *textureRef;
         textureRef->count += 1;
     }
+    
     else {
+        // Open each texture
+        GLuint textureID;
+        glGenTextures(1, &textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        setPngTexture(newMesh->getTextureName());
+        glGenerateMipmap(GL_TEXTURE_2D);
+        
+        // Setup a new texture reference
+        TextureRef newTextrueRef(newMesh->getTextureName(), textureID);
+        newMesh->textureRef = newTextrueRef;
+        m_textureList.push_back(newTextrueRef);
+        
+        
+        // Add the texture to the group
+        //Texture newTexture = Texture();
+        //newTexture.Texture = textureID;
+        //newGroup->textures.push_back(newTexture);
+        
+        /*
         // Get the texture
         ImageData *imageData = m_resourceManager->loadBMPImage(newMesh->getTextureName());
         if (imageData == NULL) {
@@ -579,9 +603,9 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
         // Setup a new texture reference
         TextureRef newTextrueRef(newMesh->getTextureName(), textureBuffer);
         newMesh->textureRef = newTextrueRef;
-        m_textureList.push_back(newTextrueRef);
+        m_textureList.push_back(newTextrueRef);*/
     }
-}*/
+}
 
 /*
 void RenderingEngine::unLoadMesh(IMesh* rmvMesh) {
@@ -611,7 +635,7 @@ void RenderingEngine::unLoadMesh(IMesh* rmvMesh) {
         }
     }
     rmvMesh->textureRef = TextureRef();
-}
+}*/
 
 list<MeshRef>::iterator RenderingEngine::findMeshRef(MeshRef mesh) {
     list<MeshRef>::iterator curMesh = m_meshList.begin();
@@ -625,9 +649,8 @@ list<TextureRef>::iterator RenderingEngine::findTextureRef(TextureRef texture) {
     while (curTexture != m_textureList.end() && !(*curTexture == texture))
         ++curTexture;
     return curTexture;
-}*/
+}
 
-    /*
 void RenderingEngine::setPngTexture(string name) const
 {
     TextureDescription description = m_resourceManager->LoadPngImage(name);
@@ -667,6 +690,6 @@ void RenderingEngine::setPngTexture(string name) const
     ivec2 size = description.size;
     glTexImage2D(GL_TEXTURE_2D, 0, format, size.x, size.y, 0, format, type, data);
     m_resourceManager->UnloadImage();
-}*/
+}
 
 //}

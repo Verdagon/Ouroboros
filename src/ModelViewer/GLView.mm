@@ -1,6 +1,6 @@
 
 #import "GLView.h"
-#import "Interfaces.hpp"
+#import "Interfaces.h"
 #import <OpenGLES/ES2/gl.h>
 
 
