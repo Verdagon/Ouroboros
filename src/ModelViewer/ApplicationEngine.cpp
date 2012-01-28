@@ -3,8 +3,8 @@
 
 #include "Interfaces.hpp"
 #include "Matrix.hpp"
-#include "MainView.hpp"
-#include "MainMenu.hpp"
+//#include "MainView.hpp"
+//#include "MainMenu.hpp"
 #include <iostream>
 #include <fstream>
 
@@ -18,9 +18,9 @@ public:
     
     //Used by controllers
     string* GetResourcePath();
-    void SetController(IController *controller);
-    void SetState(IState* state);
-    IState* GetState();
+    //void SetController(IController *controller);
+    //void SetState(IState* state);
+    //IState* GetState();
     
     void OnFingerUp(vec2 location);
     void OnFingerDown(vec2 location);
@@ -36,10 +36,10 @@ public:
 private:
     ivec2 m_mainScreenSize;
     DeviceType m_deviceType;
-    MainView* m_mainView;
-    IController* m_curController;
-    IController* m_lastController;
-    IState* m_curState;
+    //MainView* m_mainView;
+    //IController* m_curController;
+    //IController* m_lastController;
+    //IState* m_curState;
     IRenderingEngine* m_renderingEngine;
     IResourceManager* m_resourceManager;
 };
@@ -63,33 +63,35 @@ ApplicationEngine::ApplicationEngine(DeviceType deviceType, IRenderingEngine* re
     }
     m_renderingEngine = renderingEngine;
     m_resourceManager = resourceManager;
-    m_curController = NULL;
-    m_lastController = NULL;
-    m_curState = NULL;
+    //m_curController = NULL;
+    //m_lastController = NULL;
+    //m_curState = NULL;
 }
 
 ApplicationEngine::~ApplicationEngine() {
     delete m_renderingEngine;
-    delete m_mainView;
+    //delete m_mainView;
 }
 
 void ApplicationEngine::Initialize(int width, int height) {
     m_mainScreenSize = ivec2(width, height);
     
     //Initalize the main view
-    m_mainView = new MainView(m_deviceType, width, height);
+    //m_mainView = new MainView(m_deviceType, width, height);
     
     //Initalize the rendering engine
-    m_renderingEngine->Initialize(m_mainView, width, height);
+    //m_renderingEngine->Initialize(m_mainView, width, height);
+    m_renderingEngine->Initialize(width, height);
     
     //Initalize Screen and Game Controllers here
-    SetController(new MainMenu(this));
+    //SetController(new MainMenu(this));
 }
 
 string* ApplicationEngine::GetResourcePath() {
     return m_resourceManager->GetResourcePath();
 }
 
+/*
 void  ApplicationEngine::SetController(IController *controller) {
     delete m_lastController;
     m_lastController = m_curController;
@@ -105,26 +107,27 @@ void ApplicationEngine::SetState(IState *state) {
 
 IState* ApplicationEngine::GetState() {
     return m_curState;
-}
+}*/
 
 void ApplicationEngine::Render() const {
-    m_renderingEngine->Render();
+    list<IObject3d *> objectList(0);
+    m_renderingEngine->render(objectList);
 }
 
 void ApplicationEngine::UpdateAnimations(float td) {
-    m_curController->Tic(td);
+    //m_curController->Tic(td);
 }
 
 void ApplicationEngine::OnFingerUp(vec2 location) {
-        m_curController->OnFingerUp(location);
+        //m_curController->OnFingerUp(location);
 }
 
 void ApplicationEngine::OnFingerDown(vec2 location) {
-        m_curController->OnFingerDown(location);
+        //m_curController->OnFingerDown(location);
 }
 
 void ApplicationEngine::OnFingerMove(vector<vec2> touches) {
-        m_curController->OnFingerMove(touches);
+        //m_curController->OnFingerMove(touches);
 }
 
 void ApplicationEngine::AppWillResignActive() {
