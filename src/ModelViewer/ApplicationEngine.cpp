@@ -35,6 +35,7 @@ private:
     
     ivec2 m_mainScreenSize;
     vec2 m_lastLoc;
+    ivec2 m_direction;
     DeviceType m_deviceType;
     Camera *m_camera;
     TextObject *m_testText;
@@ -93,6 +94,8 @@ void ApplicationEngine::Initialize(int width, int height) {
     
     m_renderingEngine->setCamera(m_camera);
     m_renderingEngine->Initialize(width, height);
+    
+    m_direction = ivec2(0, 0);
     
     
     GenerateOptions options = {
@@ -194,44 +197,53 @@ void ApplicationEngine::Render() {
 }
 
 void ApplicationEngine::UpdateAnimations(float td) {
+    setPlayerAndCameraPos(Position(m_player->center.x + m_direction.x, m_player->center.y + m_direction.y));
     //m_testText->setText("ABC");
     //m_curController->Tic(td);
 }
 
 void ApplicationEngine::OnFingerUp(vec2 location) {
-    // todo: autodetect w and h
-    int width = 320;
-    int height = 480;
-    
-    int deltaX = 0;
-    if (location.x < width / 3)
-        deltaX = -1;
-    if (location.x > width * 2/3)
-        deltaX = 1;
-    
-    int deltaY = 0;
-    if (location.y < height / 3)
-        deltaY = -1;
-    if (location.y > height * 2/3)
-        deltaY = 1;
-    
-    std::cout << "moving by " << deltaX << "," << deltaY << std::endl;
-    
-    setPlayerAndCameraPos(Position(m_player->center.x + deltaX, m_player->center.y + deltaY));
-    
+    m_direction = ivec2(0, 0);
 }
 
 void ApplicationEngine::OnFingerDown(vec2 location) {
-    m_lastLoc = location;
+    // todo: autodetect w and h
+    int width = m_mainScreenSize.x;
+    int height = m_mainScreenSize.y;
+    
+    int deltaX = 0;
+    if (location.x < width / 3)
+        m_direction.x = -1;
+    if (location.x > width * 2/3)
+        m_direction.x = 1;
+    
+    int deltaY = 0;
+    if (location.y < height / 3)
+        m_direction.y = -1;
+    if (location.y > height * 2/3)
+        m_direction.y = 1;
 }
 
 void ApplicationEngine::OnFingerMove(vector<vec2> touches) {
-    vec2 move = touches[0] - m_lastLoc;
-    move = move * 0.5;
-    std::cout << "(" << move.x << "," << move.y << ")\n";
-    m_camera->rotLocal(move.y, -move.x);
-    m_lastLoc = touches[0];
+    // todo: autodetect w and h
+    int width = m_mainScreenSize.x;
+    int height = m_mainScreenSize.y;
     
+    int deltaX = 0;
+    if (touches[0].x < width / 3)
+         m_direction.x = -1;
+    if (touches[0].x > width * 2/3)
+         m_direction.x = 1;
+    
+    int deltaY = 0;
+    if (touches[0].y < height / 3)
+         m_direction.y = -1;
+    if (touches[0].y > height * 2/3)
+         m_direction.x = -1;
+    
+    //std::cout << "moving by " << deltaX << "," << deltaY << std::endl;
+    
+    //setPlayerAndCameraPos(Position(m_player->center.x + deltaX, m_player->center.y + deltaY));
 }
 
 void ApplicationEngine::AppWillResignActive() {
