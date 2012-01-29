@@ -30,7 +30,7 @@ void main(void)
    //distFactor = inversesqrt(distFactor);
    
    float df = max(0.0, dot(N, L));
-   df = df / ( 1.0 + 0.000005 * distFactor);
+   df = df / ( 1.0 + 0.00005 * distFactor);
    
    float sf = max(0.0, dot(N, H));
    sf = pow(sf, Shininess);
