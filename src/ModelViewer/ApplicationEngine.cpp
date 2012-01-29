@@ -170,6 +170,15 @@ void ApplicationEngine::setPlayerAndCameraPos(Position pos) {
     
     m_map->tiles->setLightPosition(m_map->tileCoordAtPosition(pos));
     
+    for (std::list<Creature *>::iterator i = m_creatures.begin(), iEnd = m_creatures.end(); i != iEnd; i++) {
+        Creature *creature = *i;
+        if (creature == m_player)
+            continue;
+        
+        float dist = (float)posDistance((Position&)creature->center, (Position&)m_player->center);
+        creature->setVisible(dist < 10 * m_map->tileLengthInMapUnits);
+    }
+    
     m_camera->ref = vec3(m_player->center.x - (m_player->radius), -(m_player->center.y - (m_player->radius)), 0);
     m_camera->fwd = vec3(0, 15, -30);
     m_camera->eye = m_camera->ref - m_camera->fwd;

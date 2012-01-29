@@ -252,6 +252,13 @@ public:
         }
     }
     
+    void setVisible(bool visible) {
+        for (list<IMesh *>::iterator i = m_meshList.begin(), iEnd = m_meshList.end(); i != iEnd; i++) {
+            IMesh *mesh = *i;
+            mesh->display = visible;
+        }
+    }
+    
     list<IMesh *> m_meshList;
     
     virtual list<IMesh *>* getMeshes() {
@@ -261,6 +268,9 @@ public:
 
 
 inline float distance(const Position &a, const Position &b) {
+    return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+}
+inline float posDistance(const Position &a, const Position &b) {
     return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 }
 
