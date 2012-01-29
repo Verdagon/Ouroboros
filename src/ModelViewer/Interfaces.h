@@ -165,6 +165,25 @@ struct IRenderingEngine {
     virtual ~IRenderingEngine() {}
 };
 
+struct ITrack {
+     
+};
+
+class ISoundCompleteCallback {
+public:
+    virtual void soundComplete(ITrack) = 0;
+};
+
+struct ISoundEngine {
+    virtual void Initalize() = 0;
+    virtual void addTrack(ITrack *track, int relVolume) = 0;
+    virtual void alterTrack(ITrack *oldTrack, ITrack *newTrack, int newVolume) = 0;
+    virtual void removeTrack(ITrack *track) = 0;
+    virtual void setCallback(ISoundCompleteCallback *callbackClass);
+    
+    virtual ~ISoundEngine() {};
+};
+
 enum TextureFormat {
     TextureFormatGray,
     TextureFormatGrayAlpha,
@@ -189,6 +208,9 @@ struct IResourceManager {
     virtual void UnloadShaders() = 0;
     virtual ~IResourceManager() {}
 };
+
+
+
 
 IResourceManager* CreateResourceManager();
 
