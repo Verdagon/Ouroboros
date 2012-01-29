@@ -1,10 +1,35 @@
 #include "Game.h"
+#import "Object.h"
 
 Map::Map(int tileLengthInMapUnits_, const MapTiles *tiles_) :
 tileLengthInMapUnits(tileLengthInMapUnits_),
 tiles(tiles_),
 size(tiles->getSize().col * tileLengthInMapUnits, tiles->getSize().row * tileLengthInMapUnits),
 grid(size) {
+    for (int row = 0; row < tiles->getSize().row; row++) {
+        for (int col = 0; col < tiles->getSize().col; col++) {
+            Mesh *mesh = NULL;
+            
+//            switch ((*tiles)[TileCoord(row, col)].character) {
+//                case '.':
+//                    mesh = new Mesh("blank.obj", "blank.png");
+//                    break;
+//                    
+//                case '#':
+                    mesh = new Mesh("pound.obj", "pound.png");
+//                    break;
+//                    
+//                default:
+//                    assert(false);
+//                    break;
+//            }
+            
+            mesh->meshMtx = mat4::Translate(col * tileLengthInMapUnits, row * tileLengthInMapUnits, 0);
+            
+            m_meshList.push_back(mesh);
+        }
+    }
+    
     for (int x = 0; x < size.x; x++) {
         for (int y = 0; y < size.y; y++) {
             Position pos(x, y);
