@@ -296,6 +296,7 @@
 		39E90AD813C4D5B600D5035E /* Ouroboros */ = {
 			isa = PBXGroup;
 			children = (
+				53A83E1714D50895000A188A /* SoundEngine */,
 				391205911410516700191A3B /* ArtAssets */,
 				392F25F31405B2AF003EA078 /* Views */,
 				3719979914D3F19500DA460D /* ResourceManager */,
@@ -370,6 +371,13 @@
 				39C8597013C66501008DE491 /* Simple.vert */,
 			);
 			name = Shaders;
+			sourceTree = "<group>";
+		};
+		53A83E1714D50895000A188A /* SoundEngine */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = SoundEngine;
 			sourceTree = "<group>";
 		};
 		B11EE87714D4EB7F0055DEAE /* GameLogic */ = {
