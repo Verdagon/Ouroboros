@@ -90,7 +90,7 @@ ApplicationEngine::~ApplicationEngine() {
 void ApplicationEngine::Initialize(int width, int height) {
     m_mainScreenSize = ivec2(width, height);
     
-    m_camera = new Camera();
+    m_camera = new Camera(ivec2(0, 0));
     
     m_renderingEngine->setCamera(m_camera);
     m_renderingEngine->Initialize(width, height);
@@ -173,10 +173,11 @@ void ApplicationEngine::setPlayerAndCameraPos(Position pos) {
     
     m_map->tiles->setLightPosition(m_map->tileCoordAtPosition(pos));
     
-    m_camera->ref = vec3(m_player->center.x - (m_player->radius), -(m_player->center.y - (m_player->radius)), 0);
-    m_camera->fwd = vec3(0, 15, -30);
-    m_camera->eye = m_camera->ref - m_camera->fwd;
-    m_camera->up = vec3(0, 0, 1);
+    m_camera->setLoc(ivec2(m_player->center.x - (m_player->radius), -(m_player->center.y - (m_player->radius))));
+    //m_camera->ref = vec3(m_player->center.x - (m_player->radius), -(m_player->center.y - (m_player->radius)), 0);
+    //m_camera->fwd = vec3(0, 15, -30);
+    //m_camera->eye = m_camera->ref - m_camera->fwd;
+    //m_camera->up = vec3(0, 0, 1);
 }
 
 string* ApplicationEngine::GetResourcePath() {
@@ -202,13 +203,11 @@ void ApplicationEngine::OnFingerDown(vec2 location) {
     int width = m_mainScreenSize.x;
     int height = m_mainScreenSize.y;
     
-    int deltaX = 0;
     if (location.x < width / 3)
         m_direction.x = -1;
     if (location.x > width * 2/3)
         m_direction.x = 1;
     
-    int deltaY = 0;
     if (location.y < height / 3)
         m_direction.y = -1;
     if (location.y > height * 2/3)
@@ -220,17 +219,15 @@ void ApplicationEngine::OnFingerMove(vector<vec2> touches) {
     int width = m_mainScreenSize.x;
     int height = m_mainScreenSize.y;
     
-    int deltaX = 0;
     if (touches[0].x < width / 3)
          m_direction.x = -1;
     if (touches[0].x > width * 2/3)
          m_direction.x = 1;
     
-    int deltaY = 0;
     if (touches[0].y < height / 3)
          m_direction.y = -1;
     if (touches[0].y > height * 2/3)
-         m_direction.x = -1;
+         m_direction.x = 1;
     
     //std::cout << "moving by " << deltaX << "," << deltaY << std::endl;
     

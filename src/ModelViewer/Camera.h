@@ -6,12 +6,13 @@
 
 class Camera: public ICamera {
 public:
-    Camera();
+    Camera(ivec2 start);
     ~Camera();
-    void rotLocal(float pitch, float yaw);
-    void moveInOut(float dist);
+    void setLoc(ivec2 loc);
+    void setHight(float hight);
 private:
-    float m_pitch, m_yaw, m_dist;
+    float m_height;
+    vec3 m_dir;
 };
 
 #endif
