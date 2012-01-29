@@ -1,7 +1,7 @@
 #include "Game.h"
 #import "Object.h"
 
-Map::Map(int tileLengthInMapUnits_, const MapTiles *tiles_) :
+Map::Map(int tileLengthInMapUnits_, MapTiles *tiles_) :
 tileLengthInMapUnits(tileLengthInMapUnits_),
 tiles(tiles_),
 size(tiles->getSize().col * tileLengthInMapUnits, tiles->getSize().row * tileLengthInMapUnits),
@@ -24,28 +24,29 @@ grid(size) {
                     break;
             }
             
-            
             mesh->size = 2;
             mesh->meshMtx = mat4::Identity();
-//            mesh->meshMtx *= mat4::Scale(2);
+            //            mesh->meshMtx *= mat4::Scale(2);
             mesh->meshMtx *= mat4::Translate(col * tileLengthInMapUnits, row * tileLengthInMapUnits, 0);
-//            mesh->meshMtx *= mat4::Scale(tileLengthInMapUnits);
-//            mesh->meshMtx *= mat4::Scale(.5);
-//            mesh->meshMtx *= mat4::Translate(1, 1, 1);
-            std::cout << col * tileLengthInMapUnits << " " << row * tileLengthInMapUnits << std::endl;
+            //            mesh->meshMtx *= mat4::Scale(tileLengthInMapUnits);
+            //            mesh->meshMtx *= mat4::Scale(.5);
+            //            mesh->meshMtx *= mat4::Translate(1, 1, 1);
+//            std::cout << col * tileLengthInMapUnits << " " << row * tileLengthInMapUnits << std::endl;
             
-            m_meshList.push_back(mesh);
+            (*tiles)[TileCoord(row, col)].mesh = mesh;
+            tiles->visibleMeshes.push_back(mesh);
         }
     }
+    
     
     for (int x = 0; x < size.x; x++) {
         for (int y = 0; y < size.y; y++) {
             Position pos(x, y);
-            grid[pos] = GridLocation(&getTileAtPosition(pos));
+            grid[pos] = GridNode(&getTileAtPosition(pos));
         }
     }
     
-    calculateAllGridLocationsMaximumRadiiOfInhabitingCreatures();
+    calculateAllGridNodesMaximumRadiiOfInhabitingCreatures();
 }
 
 Position Map::findCenterOfRandomWalkableAreaOfRadius(int radius) {
@@ -96,7 +97,7 @@ int max(int a, int b) {
     return a > b ? a : b;
 }
 
-void Map::calculateAllGridLocationsMaximumRadiiOfInhabitingCreatures() {
+void Map::calculateAllGridNodesMaximumRadiiOfInhabitingCreatures() {
     int sufficientDistanceFromUnwalkableLocations = 1;
     std::set<Position, Position::Before> uncalculatedPositions;
     

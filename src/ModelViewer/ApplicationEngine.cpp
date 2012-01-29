@@ -29,7 +29,10 @@ public:
     void AppWillEnterForeground();
     void AppWillTerminate();
     ivec2* GetScreenSize();
+    
 private:
+    void setPlayerAndCameraPos(Position pos);
+    
     ivec2 m_mainScreenSize;
     vec2 m_lastLoc;
     DeviceType m_deviceType;
@@ -66,41 +69,6 @@ ApplicationEngine::ApplicationEngine(DeviceType deviceType, IRenderingEngine* re
     m_objects3d = list<IObject *>(0);
     m_objects2d = list<IObject *>(0);
     
-    GenerateOptions options = {
-        10, 10,
-        1337,
-        2,
-        2,
-        6,
-        6,
-        1,
-        10,
-        Tile(false, '#'),
-        Tile(true, '.')
-    };
-    MapTiles *mapTiles = generateMap(options);
-    
-//    displayMapTiles(*mapTiles);
-    
-    m_map = new Map(8, mapTiles);
-//    
-    m_renderingEngine->addObject(m_map);
-    m_objects3d.push_back(m_map);
-//
-    {
-        int playerRadius = 3;
-        Position playerCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(playerRadius);
-        playerCenter.x = 4;
-        playerCenter.y = 4;
-        m_player = new Creature('@', playerRadius, playerCenter);
-        m_player->setLoc(vec3(playerCenter.x, playerCenter.y, 10));
-        
-        m_map->placeCreature(m_player);
-        
-        m_renderingEngine->addObject(m_player);
-        m_objects3d.push_back(m_player);
-    }
-    
 //    Position destination = map.findCenterOfRandomWalkableAreaOfRadius(playerRadius);
 //    
 //    std::cout << "player is at " << playerCenter << " going to travel to " << destination << std::endl;
@@ -129,6 +97,54 @@ void ApplicationEngine::Initialize(int width, int height) {
     
     m_renderingEngine->setCamera(m_camera);
     m_renderingEngine->Initialize(width, height);
+    
+    
+    GenerateOptions options = {
+        100, 100,
+        1347,
+        3,
+        4,
+        6,
+        8,
+        3,
+        20,
+        Tile(false, '#'),
+        Tile(true, '.')
+    };
+    MapTiles *mapTiles = generateMap(options);
+    
+    //    displayMapTiles(*mapTiles);
+    
+    m_map = new Map(8, mapTiles);
+    //    
+    m_renderingEngine->addObject(m_map->tiles);
+    m_objects3d.push_back(m_map->tiles);
+    //
+    {
+        int playerRadius = 3;
+        Position playerCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(playerRadius);
+        playerCenter.x = 4;
+        playerCenter.y = 4;
+        m_player = new Creature('@', playerRadius, playerCenter);
+        setPlayerAndCameraPos(playerCenter);
+        
+        m_map->placeCreature(m_player);
+        m_renderingEngine->addObject(m_player);
+        m_objects3d.push_back(m_player);
+    }
+}
+
+void ApplicationEngine::setPlayerAndCameraPos(Position pos) {
+    m_player->center.x = pos.x;
+    m_player->center.y = pos.y;
+    m_player->setLoc(vec3(m_player->center.x, m_player->center.y, 10));
+    
+    m_map->tiles->setLightPosition(m_map->tileCoordAtPosition(pos));
+    
+    m_camera->fwd = vec3(-25, 0, -100);
+    m_camera->eye = vec3(25 + m_player->center.x, m_player->center.y, 100);
+    m_camera->ref = vec3(m_player->center.x, m_player->center.y, 0);
+    m_camera->up = vec3(0, 0, 1);
 }
 
 string* ApplicationEngine::GetResourcePath() {
@@ -157,14 +173,14 @@ void ApplicationEngine::OnFingerUp(vec2 location) {
     
     int deltaY = 0;
     if (location.y < height / 3)
-        deltaY = -1;
-    if (location.y > height * 2/3)
         deltaY = 1;
+    if (location.y > height * 2/3)
+        deltaY = -1;
     
-    m_player->center.x += deltaX;
-    m_player->center.y += deltaY;
+    std::cout << "moving by " << deltaX << "," << deltaY << std::endl;
     
-    m_player->setLoc(vec3(m_player->center.x, m_player->center.y, 10));
+    setPlayerAndCameraPos(Position(m_player->center.x + deltaX, m_player->center.y + deltaY));
+    
 }
 
 void ApplicationEngine::OnFingerDown(vec2 location) {
