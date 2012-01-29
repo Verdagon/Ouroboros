@@ -119,14 +119,13 @@ void ApplicationEngine::Initialize(int width, int height) {
     {
         int playerRadius = 3;
         Position playerCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(playerRadius);
-        playerCenter.x = 4;
-        playerCenter.y = 4;
         m_player = new Creature('@', playerRadius, playerCenter);
-        setPlayerAndCameraPos(playerCenter);
         
         m_map->placeCreature(m_player);
         m_renderingEngine->addObject(m_player);
         m_objects3d.push_back(m_player);
+        
+        setPlayerAndCameraPos(playerCenter);
     }
     
 //    Object *myMesh1 = new Object("atsym.obj", "atsym.png");
@@ -141,10 +140,19 @@ void ApplicationEngine::Initialize(int width, int height) {
 }
 
 void ApplicationEngine::setPlayerAndCameraPos(Position pos) {
+    m_map->removeCreature(m_player);
+    
+    if (m_map->areaIsWalkable(pos, m_player->radius))
+        m_player->center = pos;
+    else
+        pos = m_player->center;
+    
+    m_map->placeCreature(m_player);
+    
     m_player->center.x = pos.x;
     m_player->center.y = pos.y;
     std::cout << "Putting player at " << pos << std::endl;
-    m_player->setLoc(vec3(m_player->center.x, -m_player->center.y, 10));
+    m_player->setLoc(vec3(m_player->center.x, -m_player->center.y, 0));
     
     m_map->tiles->setLightPosition(m_map->tileCoordAtPosition(pos));
     
