@@ -9,6 +9,7 @@ Mesh::Mesh(string meshName, string textureName) {
     textureMtx =  mat4::Identity();
     color = vec4(0.8, 0.8, 0.8, 1.0);
     normalType = LOAD_NORMAL_VERTEX;
+    display = true;
     size = 1;
 }
 

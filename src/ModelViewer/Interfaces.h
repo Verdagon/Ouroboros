@@ -104,6 +104,7 @@ struct IMesh {
     vec4 color;
     float size;            // the size to load the mesh as.
     LOAD_NORMAL_TYPE normalType;
+    bool display;
     
     // File name and Mesh type
     // Name used as a key by Rendering Engine for finding duplicate meshes.
@@ -160,7 +161,7 @@ struct IRenderingEngine {
     virtual void setCamera(ICamera *camera) = 0;
     virtual void addObject(IObject *obj) = 0;      // Before any object can be renderd it needs to be added by this method.
     virtual void removeObject(IObject *obj) = 0;   // Removes the object from the rendering engine.
-    virtual void render(list<IObject *> &objects) = 0;
+    virtual void render(list<IObject *> &objects3d, list<IObject *> &objects2d) = 0;
     virtual ~IRenderingEngine() {}
 };
 

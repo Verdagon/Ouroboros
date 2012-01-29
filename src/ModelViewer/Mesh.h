@@ -9,8 +9,8 @@ public:
     ~Mesh();
     string getMeshName();
     string getTextureName();
-    MeshData* getMeshData();
-    ImageData* getImageData();
+    virtual MeshData* getMeshData();
+    virtual ImageData* getImageData();
 private:
     string m_meshName;
     string m_textureName;
