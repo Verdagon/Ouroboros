@@ -117,7 +117,7 @@ void RenderingEngine::Initialize(int width, int height)
     glEnableVertexAttribArray(m_attributes.textureCoord);
     
     // Set up some default material parameters.
-    glUniform3f(m_uniforms.ambientMaterial, 0.0f, 0.0f, 0.4f);
+    glUniform3f(m_uniforms.ambientMaterial, 0.0f, 0.0f, 0.0f);
     glUniform3f(m_uniforms.specularMaterial, 0.5, 0.5, 0.5);
     glUniform1f(m_uniforms.shininess, 50);
     
