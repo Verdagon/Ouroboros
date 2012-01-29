@@ -219,6 +219,7 @@ public:
             case '@': {
                 IMesh *mesh = new Mesh("atsym.obj", "atsym.png");
                 mesh->meshMtx = mat4::Translate(center.x, center.y, 0);
+                mesh->size = 2;
                 m_meshList.push_back(mesh);
             } break;
                 
@@ -280,6 +281,8 @@ public:
     Position findCenterOfRandomWalkableAreaOfRadius(int radius);
     
     void placeCreature(Creature *creature);
+    void removeCreature(Creature *creature);
+    bool areaIsWalkable(const Position &pos, int radius);
 
 private:
     bool nextToAnyCalculatedPositions(const Position &currentPosition);
