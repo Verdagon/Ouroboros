@@ -35,7 +35,8 @@ private:
     void unitAttack(Creature *attackingCreature);
     void unitAct(Creature *actingCreature);
     bool unitCanMoveTo(Creature *unit, const Position &pos);
-    float m_hype;
+    void addCreature(Creature *creature);
+    void killCreature(Creature *victim);
     
     ivec2 m_mainScreenSize;
     vec2 m_lastLoc;
