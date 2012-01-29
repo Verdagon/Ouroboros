@@ -107,7 +107,7 @@ void ApplicationEngine::Initialize(int width, int height) {
     
     
     GenerateOptions options = {
-        20, 30,
+        40, 50,
         1347,
         3,
         4,
@@ -302,7 +302,7 @@ void ApplicationEngine::UpdateAnimations(float td) {
         Creature *creature = *i;
         creature->animate(currentTime);
         if (creature != m_player)
-            while (creature->nextActionTime < currentTime)
+            if (creature->nextActionTime < currentTime)
                 unitAct(creature);
     }
     
