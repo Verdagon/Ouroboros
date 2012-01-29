@@ -52,6 +52,9 @@
 		39E90B0513C4DF8000D5035E /* ApplicationEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39E90B0313C4DF8000D5035E /* ApplicationEngine.cpp */; };
 		39E90B0813C4DFC900D5035E /* ResourceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 39E90B0713C4DFC900D5035E /* ResourceManager.mm */; };
 		39E90B1D13C5159300D5035E /* RenderingEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39E90B1B13C5159300D5035E /* RenderingEngine.cpp */; };
+		B10509F014D56DA700FE1227 /* sword.obj in Resources */ = {isa = PBXBuildFile; fileRef = B10509ED14D56DA700FE1227 /* sword.obj */; };
+		B10509F114D56DA700FE1227 /* sword.png in Resources */ = {isa = PBXBuildFile; fileRef = B10509EE14D56DA700FE1227 /* sword.png */; };
+		B10509F214D56DA700FE1227 /* unitcube.obj in Resources */ = {isa = PBXBuildFile; fileRef = B10509EF14D56DA700FE1227 /* unitcube.obj */; };
 		B11EE87D14D4EB970055DEAE /* GenerateMapTiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B11EE87914D4EB960055DEAE /* GenerateMapTiles.cpp */; };
 		B11EE87E14D4EB970055DEAE /* Map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B11EE87C14D4EB970055DEAE /* Map.cpp */; };
 /* End PBXBuildFile section */
@@ -125,6 +128,9 @@
 		39E90B0B13C4F37800D5035E /* Quaternion.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Quaternion.hpp; sourceTree = "<group>"; };
 		39E90B0D13C4F45700D5035E /* Interfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interfaces.h; sourceTree = "<group>"; };
 		39E90B1B13C5159300D5035E /* RenderingEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderingEngine.cpp; sourceTree = "<group>"; };
+		B10509ED14D56DA700FE1227 /* sword.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sword.obj; sourceTree = "<group>"; };
+		B10509EE14D56DA700FE1227 /* sword.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sword.png; sourceTree = "<group>"; };
+		B10509EF14D56DA700FE1227 /* unitcube.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = unitcube.obj; sourceTree = "<group>"; };
 		B11EE87914D4EB960055DEAE /* GenerateMapTiles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GenerateMapTiles.cpp; sourceTree = "<group>"; };
 		B11EE87A14D4EB970055DEAE /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; };
 		B11EE87B14D4EB970055DEAE /* OrderedPairMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrderedPairMap.h; sourceTree = "<group>"; };
@@ -204,6 +210,8 @@
 		391205771410510200191A3B /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				B10509ED14D56DA700FE1227 /* sword.obj */,
+				B10509EF14D56DA700FE1227 /* unitcube.obj */,
 				3751BE8C14D54FD6009B55EB /* atsym.obj */,
 				3751BE8A14D52B7E009B55EB /* rat.obj */,
 				3751BE8814D52B75009B55EB /* goblin.obj */,
@@ -263,6 +271,7 @@
 		39CDA44E13FF472700958D83 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				B10509EE14D56DA700FE1227 /* sword.png */,
 				3751BE8414D52B63009B55EB /* rat.png */,
 				3751BE8214D52B59009B55EB /* goblin.png */,
 				3751BE8014D52B51009B55EB /* atsym.png */,
@@ -480,6 +489,9 @@
 				3751BE8914D52B75009B55EB /* goblin.obj in Resources */,
 				3751BE8B14D52B7E009B55EB /* rat.obj in Resources */,
 				3751BE8D14D54FD6009B55EB /* atsym.obj in Resources */,
+				B10509F014D56DA700FE1227 /* sword.obj in Resources */,
+				B10509F114D56DA700FE1227 /* sword.png in Resources */,
+				B10509F214D56DA700FE1227 /* unitcube.obj in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
