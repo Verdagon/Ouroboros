@@ -135,7 +135,7 @@ void ApplicationEngine::Initialize(int width, int height) {
     //m_renderingEngine->addObject(m_testText);
     //m_objects2d.push_back(m_testText);
     
-    m_camera = new Camera(vec3(0, 0, 30));
+    m_camera = new Camera(vec3(-50, -20, 200));
     m_renderingEngine->setCamera(m_camera);
     m_renderingEngine->Initialize(width, height);
 }
