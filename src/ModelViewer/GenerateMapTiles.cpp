@@ -321,7 +321,7 @@ MapTiles *generateMap(const GenerateOptions &options) {
     
     connectAllRegions(map, options.wall, options.floor);
     
-    assert(numRoomsGenerated > 2);
+    assert(numRoomsGenerated > 0);
     
     return map;
 }
