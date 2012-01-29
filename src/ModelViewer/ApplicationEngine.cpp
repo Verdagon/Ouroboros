@@ -32,6 +32,7 @@ private:
     ivec2 m_mainScreenSize;
     DeviceType m_deviceType;
     Camera *m_camera;
+    TextObject *m_testText;
     list<IObject *> m_objects3d;
     list<IObject *> m_objects2d;
     IRenderingEngine* m_renderingEngine;
@@ -70,13 +71,14 @@ void ApplicationEngine::Initialize(int width, int height) {
     m_mainScreenSize = ivec2(width, height);
     
     //add a single test object;
-    IObject *newObject = new Object("spaceship.obj", "Loading_Iphone.png");
+    //IObject *newObject = new Object("pound.obj", "pound.png");
+    IObject *newObject = new Object("atsym.obj", "atsym.png");
     m_renderingEngine->addObject(newObject);
     m_objects3d.push_back(newObject);
     
-    newObject = new TextObject(ivec2(10, 10), ivec2(0, 0));
-    m_renderingEngine->addObject(newObject);
-    m_objects2d.push_back(newObject);
+    //m_testText = new TextObject(ivec2(40, 40), ivec2(0, 0));
+    //m_renderingEngine->addObject(m_testText);
+    //m_objects2d.push_back(m_testText);
     
     m_camera = new Camera(vec3(0, 0, 0));
     m_renderingEngine->setCamera(m_camera);
@@ -92,6 +94,7 @@ void ApplicationEngine::Render() {
 }
 
 void ApplicationEngine::UpdateAnimations(float td) {
+    //m_testText->setText("ABC");
     //m_curController->Tic(td);
 }
 

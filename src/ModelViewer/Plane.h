@@ -6,9 +6,10 @@
 class Plane: public Mesh {
 public:
     Plane(string textureName, vec3 dimensions, vec3 loc);
+    Plane(Plane *previousPlane);
     ~Plane();
     MeshData* getMeshData();
-private:
+protected:
     vec3 m_dimensions;
     vec3 m_location;
 };
