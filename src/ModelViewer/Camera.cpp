@@ -1,8 +1,8 @@
 #include "Camera.h"
 #include <iostream>
 
-Camera::Camera(vec3 start) {
-    eye = start;
+Camera::Camera() {
+    eye = vec3(0, 0, 0);
     ref = vec3(0, 0, 0);
     up = vec3(0, 0, 1);
     /*

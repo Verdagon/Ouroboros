@@ -323,5 +323,14 @@ MapTiles *generateMap(const GenerateOptions &options) {
     
     assert(numRoomsGenerated > 0);
     
+        std::cout << "Map:" << std::endl;
+        for (int row = 0; row < map->getSize().row; row++) {
+            for (int col = 0; col < map->getSize().col; col++) {
+                std::cout << (*map)[TileCoord(row, col)].character;
+            }
+            std::cout << std::endl;
+        }
+        std::cout << "/Map" << std::endl;
+    
     return map;
 }

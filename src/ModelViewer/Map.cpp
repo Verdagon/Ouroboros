@@ -10,21 +10,28 @@ grid(size) {
         for (int col = 0; col < tiles->getSize().col; col++) {
             Mesh *mesh = NULL;
             
-//            switch ((*tiles)[TileCoord(row, col)].character) {
-//                case '.':
-//                    mesh = new Mesh("blank.obj", "blank.png");
-//                    break;
-//                    
-//                case '#':
+            switch ((*tiles)[TileCoord(row, col)].character) {
+                case '.':
+                    mesh = new Mesh("blank.obj", "blank.png");
+                    break;
+                    
+                case '#':
                     mesh = new Mesh("pound.obj", "pound.png");
-//                    break;
-//                    
-//                default:
-//                    assert(false);
-//                    break;
-//            }
+                    break;
+                    
+                default:
+                    assert(false);
+                    break;
+            }
             
-            mesh->meshMtx = mat4::Translate(col * tileLengthInMapUnits, row * tileLengthInMapUnits, 0);
+            
+            mesh->size = 2;
+            mesh->meshMtx = mat4::Identity();
+//            mesh->meshMtx *= mat4::Scale(2);
+            mesh->meshMtx *= mat4::Translate(col * tileLengthInMapUnits, row * tileLengthInMapUnits, 0);
+//            mesh->meshMtx *= mat4::Scale(tileLengthInMapUnits);
+//            mesh->meshMtx *= mat4::Scale(.5);
+//            mesh->meshMtx *= mat4::Translate(1, 1, 1);
             std::cout << col * tileLengthInMapUnits << " " << row * tileLengthInMapUnits << std::endl;
             
             m_meshList.push_back(mesh);

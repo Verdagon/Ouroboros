@@ -41,6 +41,7 @@ private:
     IResourceManager* m_resourceManager;
     Map *m_map;
     std::list<Creature *> m_creatures;
+    Creature *m_player;
 };
 
 #endif
@@ -89,13 +90,15 @@ ApplicationEngine::ApplicationEngine(DeviceType deviceType, IRenderingEngine* re
     {
         int playerRadius = 3;
         Position playerCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(playerRadius);
-        Creature *player = new Creature('@', playerRadius, playerCenter);
-        player->setLoc(vec3(10, 0, 0));
+        playerCenter.x = 4;
+        playerCenter.y = 4;
+        m_player = new Creature('@', playerRadius, playerCenter);
+        m_player->setLoc(vec3(playerCenter.x, playerCenter.y, 10));
         
-        m_map->placeCreature(player);
+        m_map->placeCreature(m_player);
         
-        m_renderingEngine->addObject(player);
-        m_objects3d.push_back(player);
+        m_renderingEngine->addObject(m_player);
+        m_objects3d.push_back(m_player);
     }
     
 //    Position destination = map.findCenterOfRandomWalkableAreaOfRadius(playerRadius);
@@ -118,23 +121,12 @@ ApplicationEngine::~ApplicationEngine() {
 void ApplicationEngine::Initialize(int width, int height) {
     m_mainScreenSize = ivec2(width, height);
     
-    //add a single test object;
-    //IObject *newObject = new Object("pound.obj", "pound.png");
-    Object *newObject = new Object("atsym.obj", "atsym.png");
-    newObject->setLoc(vec3(20, 0, 0));
-    m_renderingEngine->addObject(newObject);
-    m_objects3d.push_back(newObject);
-//    
-//    newObject = new Object("pound.obj", "pound.png");
-//    newObject->setLoc(vec3(-20, 0, 0));
-//    m_renderingEngine->addObject(newObject);
-//    m_objects3d.push_back(newObject);
+    m_camera = new Camera();
+    m_camera->fwd = vec3(-25, 0, -100);
+    m_camera->eye = vec3(25, 0, 100);
+    m_camera->ref = vec3(0, 0, 0);
+    m_camera->up = vec3(0, 0, 1);
     
-    //m_testText = new TextObject(ivec2(40, 40), ivec2(0, 0));
-    //m_renderingEngine->addObject(m_testText);
-    //m_objects2d.push_back(m_testText);
-    
-    m_camera = new Camera(vec3(-50, -20, 200));
     m_renderingEngine->setCamera(m_camera);
     m_renderingEngine->Initialize(width, height);
 }
@@ -153,7 +145,26 @@ void ApplicationEngine::UpdateAnimations(float td) {
 }
 
 void ApplicationEngine::OnFingerUp(vec2 location) {
-        
+    // todo: autodetect w and h
+    int width = 320;
+    int height = 480;
+    
+    int deltaX = 0;
+    if (location.x < width / 3)
+        deltaX = -1;
+    if (location.x > width * 2/3)
+        deltaX = 1;
+    
+    int deltaY = 0;
+    if (location.y < height / 3)
+        deltaY = -1;
+    if (location.y > height * 2/3)
+        deltaY = 1;
+    
+    m_player->center.x += deltaX;
+    m_player->center.y += deltaY;
+    
+    m_player->setLoc(vec3(m_player->center.x, m_player->center.y, 10));
 }
 
 void ApplicationEngine::OnFingerDown(vec2 location) {
