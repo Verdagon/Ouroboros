@@ -62,14 +62,17 @@ class Tile {
 public:
     bool walkable;
     char character;
+    mutable Mesh *mesh;
     
     Tile() :
     walkable(false),
-    character('?') { }
+    character('?'),
+    mesh(NULL) { }
     
     Tile(bool walkable_, char character_) :
     walkable(walkable_),
-    character(character_) { }
+    character(character_),
+    mesh(NULL) { }
     
     inline bool operator==(const Tile &that) const {
         return character == that.character;
@@ -78,7 +81,7 @@ public:
     inline bool operator!=(const Tile &that) const { return !operator==(that); }
 };
 
-class MapTiles : public OrderedPairMap<TileCoord, TileCoord::RowGetter, TileCoord::ColGetter, Tile> {
+class MapTiles : public OrderedPairMap<TileCoord, TileCoord::RowGetter, TileCoord::ColGetter, Tile>, public IObject {
 public:
     MapTiles(const TileCoord &size, const Tile &defaultTile) :
     OrderedPairMap(size, defaultTile) { }
@@ -87,6 +90,20 @@ public:
         for (int row = area.origin.row; row < area.origin.row + area.size.row; row++)
             for (int col = area.origin.col; col < area.origin.col + area.size.col; col++)
                 (*this)[TileCoord(row, col)] = tile;
+    }
+    
+    void setLightPosition(const TileCoord &lightCoord) {
+        for (int row = 0; row < size.row; row++) {
+            for (int col = 0; col < size.col; col++) {
+                TileCoord coord(row, col);
+                (*this)[coord].mesh->display = (sqrt((lightCoord.row - coord.row) * (lightCoord.row - coord.row) + (lightCoord.col - coord.col) * (lightCoord.col - coord.col)) < 10);
+            }
+        }
+    }
+    
+    list<IMesh *> visibleMeshes;
+    virtual list<IMesh *>* getMeshes() {
+        return &visibleMeshes;
     }
 };
 
@@ -159,19 +176,19 @@ public:
 
 class Creature;
 
-class GridLocation {
+class GridNode {
     const Tile *tile;
     
 public:
     int maximumRadiusOfInhabitingCreature;
     Creature *inhabitingCreature;
     
-    GridLocation() :
+    GridNode() :
     tile(NULL),
     maximumRadiusOfInhabitingCreature(-1),
     inhabitingCreature(NULL) { }
     
-    GridLocation(const Tile *tile_) :
+    GridNode(const Tile *tile_) :
     tile(tile_),
     maximumRadiusOfInhabitingCreature(-1),
     inhabitingCreature(NULL) { }
@@ -239,18 +256,18 @@ inline float distance(const Position &a, const Position &b) {
 
 
 
-class Map : public IObject {
+class Map {
 public:
     const int tileLengthInMapUnits;
-    const MapTiles *const tiles;
+    MapTiles *const tiles;
     const Position size;
     
-    typedef OrderedPairMap<Position, Position::XGetter, Position::YGetter, GridLocation> GridType;
+    typedef OrderedPairMap<Position, Position::XGetter, Position::YGetter, GridNode> GridType;
     GridType grid;
     
     std::vector<std::set<Position, Position::Before> > walkablePositionsByRadius;
     
-    Map(int tileLengthInMapUnits_, const MapTiles *tiles_);
+    Map(int tileLengthInMapUnits_, MapTiles *tiles_);
     
     inline TileCoord tileCoordAtPosition(const Position &pos) {
         return TileCoord(pos.y / tileLengthInMapUnits, pos.x / tileLengthInMapUnits);
@@ -263,18 +280,13 @@ public:
     Position findCenterOfRandomWalkableAreaOfRadius(int radius);
     
     void placeCreature(Creature *creature);
-    
-    list<IMesh *> m_meshList;
-    virtual list<IMesh *>* getMeshes() {
-        return &m_meshList;
-    }
 
 private:
     bool nextToAnyCalculatedPositions(const Position &currentPosition);
     
     bool notNextToAnyCalculatedPositions(const Position &currentPosition);
     
-    void calculateAllGridLocationsMaximumRadiiOfInhabitingCreatures();
+    void calculateAllGridNodesMaximumRadiiOfInhabitingCreatures();
     
 public:
     bool findPath(const Creature *creature, const Position &destination, std::list<Position> *finalPath) const;

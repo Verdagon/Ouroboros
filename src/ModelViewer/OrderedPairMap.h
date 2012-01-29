@@ -7,7 +7,9 @@ template<typename OrderedPair, typename Dim1Getter, typename Dim2Getter, typenam
 class OrderedPairMap {
     Dim1Getter dim1;
     Dim2Getter dim2;
-    OrderedPair size;
+public:
+    const OrderedPair size;
+private:
     T *values;
     
     inline int indexForTileLocation(const OrderedPair &pair) const {

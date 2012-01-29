@@ -6,7 +6,7 @@
 
 class Camera: public ICamera {
 public:
-    Camera(vec3 start);
+    Camera();
     ~Camera();
     void rotLocal(float pitch, float yaw);
     void moveInOut(float dist);
