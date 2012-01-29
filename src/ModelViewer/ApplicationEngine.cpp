@@ -30,6 +30,7 @@ public:
     ivec2* GetScreenSize();
 private:
     ivec2 m_mainScreenSize;
+    vec2 m_lastLoc;
     DeviceType m_deviceType;
     Camera *m_camera;
     TextObject *m_testText;
@@ -72,15 +73,22 @@ void ApplicationEngine::Initialize(int width, int height) {
     
     //add a single test object;
     //IObject *newObject = new Object("pound.obj", "pound.png");
-    IObject *newObject = new Object("atsym.obj", "atsym.png");
+    Object *newObject = new Object("atsym.obj", "atsym.png");
+    newObject->setLoc(vec3(20, 0, 0));
     m_renderingEngine->addObject(newObject);
     m_objects3d.push_back(newObject);
+    
+    newObject = new Object("pound.obj", "pound.png");
+    newObject->setLoc(vec3(-20, 0, 0));
+    m_renderingEngine->addObject(newObject);
+    m_objects3d.push_back(newObject);
+    
     
     //m_testText = new TextObject(ivec2(40, 40), ivec2(0, 0));
     //m_renderingEngine->addObject(m_testText);
     //m_objects2d.push_back(m_testText);
     
-    m_camera = new Camera(vec3(0, 0, 0));
+    m_camera = new Camera(vec3(0, 0, 30));
     m_renderingEngine->setCamera(m_camera);
     m_renderingEngine->Initialize(width, height);
 }
@@ -99,15 +107,20 @@ void ApplicationEngine::UpdateAnimations(float td) {
 }
 
 void ApplicationEngine::OnFingerUp(vec2 location) {
-        //m_curController->OnFingerUp(location);
+        
 }
 
 void ApplicationEngine::OnFingerDown(vec2 location) {
-        //m_curController->OnFingerDown(location);
+    m_lastLoc = location;
 }
 
 void ApplicationEngine::OnFingerMove(vector<vec2> touches) {
-        //m_curController->OnFingerMove(touches);
+    vec2 move = touches[0] - m_lastLoc;
+    move = move * 0.5;
+    std::cout << "(" << move.x << "," << move.y << ")\n";
+    m_camera->rotLocal(move.y, -move.x);
+    m_lastLoc = touches[0];
+    
 }
 
 void ApplicationEngine::AppWillResignActive() {
