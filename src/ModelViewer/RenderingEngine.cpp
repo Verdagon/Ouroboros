@@ -119,8 +119,9 @@ void RenderingEngine::Initialize(int width, int height)
     glEnableVertexAttribArray(m_attributes.textureCoord);
     
     // Set up some default material parameters.
-    glUniform3f(m_uniforms.ambientMaterial, 0.0f, 0.0f, 0.0f);
-    glUniform3f(m_uniforms.specularMaterial, 0.5, 0.5, 0.5);
+    glUniform3f(m_uniforms.ambientMaterial, 0.2f, 0.2f, 0.2f);
+    //glUniform3f(m_uniforms.ambientMaterial, 0, 0, 0);
+    glUniform3f(m_uniforms.specularMaterial, 1, 1, 1);
     glUniform1f(m_uniforms.shininess, 50);
     
     // set a texture
@@ -147,7 +148,8 @@ void RenderingEngine::render(list<IObject *> &objects3d, list<IObject *> &object
     glUniformMatrix4fv(m_uniforms.projection, 1, 0, projectionMatrix.Pointer());
 
     // Set the light position.
-    vec4 lightPosition(1, 1, 1, 0);
+    vec4 lightPosition(m_camera->ref.x, m_camera->ref.y, 10, 0);
+    //vec4 lightPosition(1, 1, -10, 0);
     glUniform3fv(m_uniforms.lightPosition, 1, lightPosition.Pointer());
     
     list<IObject *>::iterator obj;
