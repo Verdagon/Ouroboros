@@ -91,7 +91,7 @@ void RenderingEngine::Initialize(int width, int height)
     glBindRenderbuffer(GL_RENDERBUFFER, m_colorRenderbuffer);
     
     // Create the GLSL program.
-    string* vertexShader = m_resourceManager->GetVertexShader("Simple");
+    string* vertexShader = m_resourceManager->GetVertexShader("Complex");
     string* fragmentShader = m_resourceManager->GetFragmentShader ("Simple");
     GLuint program = buildProgram(vertexShader , fragmentShader);
     m_resourceManager->UnloadShaders();
