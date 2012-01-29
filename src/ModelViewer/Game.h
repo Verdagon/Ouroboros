@@ -201,6 +201,7 @@ public:
     const char character;
     int radius; // if radius is 1, the creature inhabits a 1x1 square. If its 2, the creature inhabits a 3x3 square, if its 3, inhabits 5x5 square, etc.
     Position center;
+    vec3 orientation;
     
     static Position areaForRadius(int radius) {
         int length = radius * 2 - 1;
@@ -214,11 +215,11 @@ public:
     Creature(char character_, int radius_, const Position &center_) :
     character(character_),
     radius(radius_),
-    center(center_) {
+    center(center_),
+    orientation(0, 1, 0) {
         switch (character) {
             case '@': {
                 IMesh *mesh = new Mesh("atsym.obj", "atsym.png");
-                mesh->meshMtx = mat4::Translate(center.x, center.y, 0);
                 mesh->size = 2;
                 m_meshList.push_back(mesh);
             } break;
@@ -236,10 +237,12 @@ public:
         }
     }
     
-    void setLoc(vec3 loc) {
+    void setCenter(const Position &pos) {
         for (list<IMesh *>::iterator i = m_meshList.begin(), iEnd = m_meshList.end(); i != iEnd; i++) {
             IMesh *mesh = *i;
-            mesh->meshMtx = mat4::Translate(loc.x, loc.y, loc.z);
+            mesh->meshMtx = mat4::Identity();
+            mesh->meshMtx *= mat4::Rotate(-90, vec3(1, 0, 0));
+            mesh->meshMtx *= mat4::Translate(center.x - (radius), -(center.y - (radius)), 0);
         }
     }
     
