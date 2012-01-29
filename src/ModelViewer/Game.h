@@ -103,7 +103,6 @@ public:
     
     list<IMesh *> visibleMeshes;
     virtual list<IMesh *>* getMeshes() {
-        std::cout << "returning vis meshes size " << visibleMeshes.size() << std::endl;
         return &visibleMeshes;
     }
 };

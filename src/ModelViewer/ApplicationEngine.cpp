@@ -117,32 +117,43 @@ void ApplicationEngine::Initialize(int width, int height) {
     
     m_map = new Map(8, mapTiles);
     //    
-    m_renderingEngine->addObject(m_map->tiles);
-    m_objects3d.push_back(m_map->tiles);
-    //
-    {
-        int playerRadius = 3;
-        Position playerCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(playerRadius);
-        playerCenter.x = 4;
-        playerCenter.y = 4;
-        m_player = new Creature('@', playerRadius, playerCenter);
-        setPlayerAndCameraPos(playerCenter);
-        
-        m_map->placeCreature(m_player);
-        m_renderingEngine->addObject(m_player);
-        m_objects3d.push_back(m_player);
-    }
+//    m_renderingEngine->addObject(m_map->tiles);
+//    m_objects3d.push_back(m_map->tiles);
+//    //
+//    {
+//        int playerRadius = 3;
+//        Position playerCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(playerRadius);
+//        playerCenter.x = 4;
+//        playerCenter.y = 4;
+//        m_player = new Creature('@', playerRadius, playerCenter);
+//        setPlayerAndCameraPos(playerCenter);
+//        
+//        m_map->placeCreature(m_player);
+//        m_renderingEngine->addObject(m_player);
+//        m_objects3d.push_back(m_player);
+//    }
+    
+    Object *myMesh1 = new Object("atsym.obj", "atsym.png");
+    myMesh1->setLoc(vec3(0, 0, 0));
+    m_renderingEngine->addObject(myMesh1);
+    m_objects3d.push_back(myMesh1);
+    
+    Object *myMesh2 = new Object("atsym.obj", "atsym.png");
+    myMesh2->setLoc(vec3(10, 0, 0));
+    m_renderingEngine->addObject(myMesh2);
+    m_objects3d.push_back(myMesh2);
 }
 
 void ApplicationEngine::setPlayerAndCameraPos(Position pos) {
     m_player->center.x = pos.x;
     m_player->center.y = pos.y;
+    std::cout << "Putting player at " << pos << std::endl;
     m_player->setLoc(vec3(m_player->center.x, m_player->center.y, 10));
     
     m_map->tiles->setLightPosition(m_map->tileCoordAtPosition(pos));
     
-    m_camera->fwd = vec3(-25, 0, -100);
-    m_camera->eye = vec3(25 + m_player->center.x, m_player->center.y, 100);
+    m_camera->fwd = vec3(0, 25, -100);
+    m_camera->eye = vec3(m_player->center.x, m_player->center.y - 25, 100);
     m_camera->ref = vec3(m_player->center.x, m_player->center.y, 0);
     m_camera->up = vec3(0, 0, 1);
 }
@@ -173,9 +184,9 @@ void ApplicationEngine::OnFingerUp(vec2 location) {
     
     int deltaY = 0;
     if (location.y < height / 3)
-        deltaY = 1;
-    if (location.y > height * 2/3)
         deltaY = -1;
+    if (location.y > height * 2/3)
+        deltaY = 1;
     
     std::cout << "moving by " << deltaX << "," << deltaY << std::endl;
     
