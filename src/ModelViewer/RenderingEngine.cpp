@@ -36,6 +36,8 @@ public:
     void addObject(IObject *obj);
     void removeObject(IObject *obj);
     void render(list<IObject *> &objects3d, list<IObject *> &objects2d);
+    vec3 getScreenLoc(vec3 point);
+    vec3 getPickLoc(vec2 coords, vec3 ref);
 private:
     GLuint buildShader(string *source, GLenum shaderType) const;
     GLuint buildProgram(string *vShader, string *fShader) const;
@@ -117,8 +119,9 @@ void RenderingEngine::Initialize(int width, int height)
     glEnableVertexAttribArray(m_attributes.textureCoord);
     
     // Set up some default material parameters.
-    glUniform3f(m_uniforms.ambientMaterial, 0.0f, 0.0f, 0.0f);
-    glUniform3f(m_uniforms.specularMaterial, 0.5, 0.5, 0.5);
+    glUniform3f(m_uniforms.ambientMaterial, 0.2f, 0.2f, 0.2f);
+    //glUniform3f(m_uniforms.ambientMaterial, 0, 0, 0);
+    glUniform3f(m_uniforms.specularMaterial, 1, 1, 1);
     glUniform1f(m_uniforms.shininess, 50);
     
     // set a texture
@@ -145,7 +148,8 @@ void RenderingEngine::render(list<IObject *> &objects3d, list<IObject *> &object
     glUniformMatrix4fv(m_uniforms.projection, 1, 0, projectionMatrix.Pointer());
 
     // Set the light position.
-    vec4 lightPosition(1, 1, 1, 0);
+    vec4 lightPosition(m_camera->ref.x, m_camera->ref.y, 10, 0);
+    //vec4 lightPosition(1, 1, -10, 0);
     glUniform3fv(m_uniforms.lightPosition, 1, lightPosition.Pointer());
     
     list<IObject *>::iterator obj;
@@ -245,6 +249,109 @@ void RenderingEngine::render(list<IObject *> &objects3d, list<IObject *> &object
     
     glDisable(GL_BLEND);
 }
+
+vec3 RenderingEngine::getScreenLoc(vec3 point) {
+    float h = 4.0f * m_mainScreenSize.x / m_mainScreenSize.y;
+    mat4 projection = mat4::Frustum(-h / 2, h / 2, -2, 2, 4, 2000);
+    projection = mat4::LookAt(projection, m_camera->eye, m_camera->ref, m_camera->up);
+    
+    vec4 result = projection.TranslatePoint(vec4(point.x, point.y, point.z, 1));
+    result.x = (result.x * 0.5 + 0.5) * m_mainScreenSize.x;
+    result.y = m_mainScreenSize.y - (result.y * 0.5 + 0.5) * m_mainScreenSize.y;
+    result.z = result.z * 0.5 + 0.5;
+    
+    return vec3(result.x, result.y, result.z);
+}
+
+vec3 RenderingEngine::getPickLoc(vec2 coords, vec3 ref) {
+    float h = 4.0f * m_mainScreenSize.x / m_mainScreenSize.y;
+    mat4 projection = mat4::Frustum(-h / 2, h / 2, -2, 2, 4, 2000);
+    projection = mat4::LookAt(projection, m_camera->eye, m_camera->ref, m_camera->up);
+    
+    // find the z and set the x, y.
+    vec4 point = projection.TranslatePoint(vec4(ref.x, ref.y, ref.z, 1));
+    
+    point.x = (coords.x / m_mainScreenSize.x) * 2 -1;
+    point.y = (m_mainScreenSize.y - coords.y)/m_mainScreenSize.y * 2 - 1;
+    
+    projection = projection.Inverse();
+    
+    point = projection.TranslatePoint(point);
+    //point.w = 1/point.w;
+    //point.x *= point.w;
+    //point.y *= point.w;
+    return vec3(point.x, point.y, point.z);
+    /*
+    point.w = 1/point.w;
+    point.z *= point.w;
+    
+    point.x = (coords.x / m_mainScreenSize.x) * 2 -1;
+    point.y = (m_mainScreenSize.y - coords.y)/m_mainScreenSize.y * 2 - 1;
+    point.z = point.z * 0.5 + 0.5;
+    point.w = 1;
+    
+    // get the inverse of the projection
+    mat4 inverse = projection.Inverse();
+    point = inverse.TranslatePoint(point);
+    
+    point.w = 1 / point.w;
+    point.x = point.x * point.w;
+    point.y = point.y * point.w;
+    point.z = point.z * point.w;*/
+    
+    return vec3(point.x, point.y, point.z);
+}
+
+/*
+vec3 RenderingEngine::getPickLoc(vec2 coords, float planeZ) {
+    vec4 tmp1, tmp2;
+    
+    //Get the model view projection matricies.
+    mat4 translation = m_backGroundView->GetTranslation();
+    mat4 projection = m_backGroundView->GetProjection();
+    
+    //Find the z value to the plane.
+    tmp1.x = translation.z.x * planeZ + translation.w.x;
+    tmp1.y = translation.z.y * planeZ + translation.w.y;
+    tmp1.z = translation.z.z * planeZ + translation.w.z;
+    tmp1.w = translation.z.w * planeZ + translation.w.w;
+    
+    float z = projection.x.z * tmp1.x + projection.y.z * tmp1.y + projection.z.z * tmp1.z + projection.w.z * tmp1.w;
+    float w = -tmp1.z;
+    
+    if (w == 0.0) {
+        return vec3(0,0,0);
+    }
+    w = 1/w;
+    z *= w;
+    
+    //Find the world space coordnates on the plane.
+    tmp1.x = (coords.x / m_screen.x) * 2 - 1;
+    tmp1.y = ((m_screen.y - coords.y) / m_screen.y) * 2 - 1;
+    tmp1.z = z;
+    tmp1.w = 1;
+    
+    //Save some processing power if the inverse matrix is the same.
+    if (!(translation == m_lastTranslation && projection == m_lastProjection)) {
+        m_lastTranslation = translation;
+        m_lastProjection = projection;
+        m_inverted = translation * projection;
+        m_inverted = m_inverted.Inverse();
+    }
+    
+    tmp2.x = m_inverted.x.x * tmp1.x + m_inverted.y.x * tmp1.y + m_inverted.z.x * tmp1.z + m_inverted.w.x * tmp1.w;
+    tmp2.y = m_inverted.x.y * tmp1.x + m_inverted.y.y * tmp1.y + m_inverted.z.y * tmp1.z + m_inverted.w.y * tmp1.w;
+    tmp2.z = m_inverted.x.z * tmp1.x + m_inverted.y.z * tmp1.y + m_inverted.z.z * tmp1.z + m_inverted.w.z * tmp1.w;
+    tmp2.w = m_inverted.x.w * tmp1.x + m_inverted.y.w * tmp1.y + m_inverted.z.w * tmp1.z + m_inverted.w.w * tmp1.w;
+    
+    tmp2.w = 1 / tmp2.w;
+    
+    vec3 point;
+    point.x = tmp2.x * tmp2.w;
+    point.y = tmp2.y * tmp2.w;
+    point.z = planeZ;
+    return point;
+}*/
 
 GLuint RenderingEngine::buildShader(string* source, GLenum shaderType) const
 {
