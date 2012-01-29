@@ -28,7 +28,7 @@ grid(size) {
             mesh->meshMtx = mat4::Identity();
             //            mesh->meshMtx *= mat4::Scale(2);
 //            std::cout << "Setting " << TileCoord(row, col) << " to screen coords " << col * tileLengthInMapUnits << "," << row * tileLengthInMapUnits << std::endl;
-            mesh->meshMtx *= mat4::Translate(col * tileLengthInMapUnits, row * tileLengthInMapUnits, 0);
+            mesh->meshMtx *= mat4::Translate(col * tileLengthInMapUnits, -row * tileLengthInMapUnits, 0);
             //            mesh->meshMtx *= mat4::Scale(tileLengthInMapUnits);
             //            mesh->meshMtx *= mat4::Scale(.5);
             //            mesh->meshMtx *= mat4::Translate(1, 1, 1);
