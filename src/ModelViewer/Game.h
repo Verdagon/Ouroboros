@@ -4,6 +4,7 @@
 #import "Interfaces.h"
 #import "Mesh.h"
 #import "OrderedPairMap.h"
+//#import "Animation.h"
 
 #include <iostream>
 #include <cassert>
@@ -211,21 +212,32 @@ public:
     const char character;
     int radius; // if radius is 1, the creature inhabits a 1x1 square. If its 2, the creature inhabits a 3x3 square, if its 3, inhabits 5x5 square, etc.
     Position center;
-    vec3 orientation;
+    
+    float spinBegin, spinEnd;
+    
     std::list<Position> path;
     IMesh *characterMesh;
 //    std::map<Position, IMesh *, Position::Before> unitBlocksByOffset;
     float nextActionTime;
+    bool markedForDeath;
+    
+    void startSpinning(float now) {
+        spinBegin = now;
+        spinEnd = now + .5;
+    }
     
     Creature(char character_, int radius_, const Position &center_) :
     character(character_),
     radius(radius_),
     center(center_),
-    orientation(0, 1, 0),
-    nextActionTime(0) {
+    spinBegin(0),
+    spinEnd(0),
+    nextActionTime(0),
+    markedForDeath(false) {
         switch (character) {
             case '@': characterMesh = new Mesh("atsym.obj", "atsym.png"); break;
             case 'g': characterMesh = new Mesh("goblin.obj", "goblin.png"); break;
+            case 'r': characterMesh = new Mesh("rat.obj", "rat.png"); break;
             default: assert(false); break;
         }
         
@@ -259,15 +271,17 @@ public:
     void setCenter(const Position &pos) {
         center = pos;
         characterMesh->meshMtx = mat4::Translate(center.x, -center.y, 0);
+    }
+    
+    void animate(float t) {
+        if (spinBegin < t && t < spinEnd) {
+            characterMesh->meshMtx = mat4::Rotate((t - spinBegin) / (spinEnd - spinBegin) * 720, vec3(0, 0, 1));
+        }
+        else {
+            characterMesh->meshMtx = mat4::Identity();
+        }
         
-//        for (std::map<Position, IMesh *>::iterator i = unitBlocksByOffset.begin(), iEnd = unitBlocksByOffset.end(); i != iEnd; i++) {
-//            Position blockOffset = i->first;
-//            Position blockPos = pos + blockOffset;
-//            i->second->meshMtx = mat4::Identity();
-//            i->second->meshMtx *= mat4::Translate(1, 1, 1);
-//            i->second->meshMtx *= mat4::Scale(.5);
-//            i->second->meshMtx *= mat4::Translate(blockPos.x, -blockPos.y, 0);
-//        }
+        characterMesh->meshMtx *= mat4::Translate(center.x, -center.y, 0);
     }
     
     void setVisible(bool visible) {

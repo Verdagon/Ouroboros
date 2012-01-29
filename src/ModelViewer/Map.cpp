@@ -78,7 +78,7 @@ void Map::removeCreature(Creature *creature) {
     
     for (int x = creatureOrigin.x; x < creatureOrigin.x + creatureSize.x; x++) {
         for (int y = creatureOrigin.y; y < creatureOrigin.y + creatureSize.y; y++) {
-            assert(grid[Position(x, y)].inhabitingCreature == creature);
+//            assert(grid[Position(x, y)].inhabitingCreature == creature);
             grid[Position(x, y)].inhabitingCreature = NULL;
         }
     }
@@ -319,9 +319,6 @@ bool Map::findPath(const Creature *creature, const Position &destination, std::l
 //        }
         
         result = true;
-    }
-    else {
-        std::cout << "Couldnt find path" << std::endl;
     }
     
     for (int x = 0; x < size.x; x++) {

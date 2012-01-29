@@ -36,6 +36,7 @@ private:
     void unitAct(Creature *actingCreature);
     bool unitCanMoveTo(Creature *unit, const Position &pos);
     void addCreature(Creature *creature);
+    void killCreature(Creature *victim);
     
     ivec2 m_mainScreenSize;
     vec2 m_lastLoc;
@@ -106,12 +107,12 @@ void ApplicationEngine::Initialize(int width, int height) {
     
     
     GenerateOptions options = {
-        10, 10,
-        1357,
-        2,
+        20, 30,
+        1347,
         3,
-        2,
-        3,
+        4,
+        4,
+        6,
         1,
         20,
         Tile(false, '#'),
@@ -135,13 +136,13 @@ void ApplicationEngine::Initialize(int width, int height) {
         setPlayerAndCameraPos(playerCenter, true);
     }
     
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 50; i++) {
         int goblinRadius = 2;
         Position goblinCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(goblinRadius);
         if (!m_map->areaIsWalkable(goblinCenter, goblinRadius))
             continue;
         
-        Creature *goblin = new Creature('g', goblinRadius, goblinCenter);
+        Creature *goblin = new Creature(i % 2 ? 'g' : 'r', goblinRadius, goblinCenter);
         goblin->setCenter(goblinCenter);
         addCreature(goblin);
     }
@@ -170,7 +171,6 @@ void ApplicationEngine::unitAttack(Creature *attackingCreature) {
     Position hitBoxOrigin = attackingCreature->center + topLeftOffsetForRadius(attackingCreature->radius + 2);
     Position hitBoxSize = areaForRadius(attackingCreature->radius + 2);
     
-    
     for (int x = hitBoxOrigin.x; x < hitBoxOrigin.x + hitBoxSize.x; x++) {
         for (int y = hitBoxOrigin.y; y < hitBoxOrigin.y + hitBoxSize.y; y++) {
             if (m_map->grid[Position(x, y)].inhabitingCreature == NULL)
@@ -180,13 +180,11 @@ void ApplicationEngine::unitAttack(Creature *attackingCreature) {
                 continue;
             
             Creature *victim = m_map->grid[Position(x, y)].inhabitingCreature;
-            victim->setVisible(false);
-            m_map->removeCreature(victim);
-            std::list<Creature *>::iterator victimIter = std::find(m_creatures.begin(), m_creatures.end(), victim);
-            assert(victimIter != m_creatures.end());
-            m_creatures.erase(victimIter);
+            victim->markedForDeath = true;
         }
     }
+    
+    attackingCreature->startSpinning(currentTime);
     
 //    inline Position areaForRadius(int radius) {
 //        int length = radius * 2 - 1;
@@ -196,6 +194,14 @@ void ApplicationEngine::unitAttack(Creature *attackingCreature) {
 //    inline Position topLeftOffsetForRadius(int radius) {
 //        return Position(-(radius - 1), -(radius - 1));
 //    }
+}
+
+void ApplicationEngine::killCreature(Creature *victim) {
+    victim->setVisible(false);
+    m_map->removeCreature(victim);
+    std::list<Creature *>::iterator victimIter = std::find(m_creatures.begin(), m_creatures.end(), victim);
+    assert(victimIter != m_creatures.end());
+    m_creatures.erase(victimIter);
 }
 
 void ApplicationEngine::setPlayerAndCameraPos(Position pos, bool force) {
@@ -250,10 +256,20 @@ bool ApplicationEngine::unitCanMoveTo(Creature *creature, const Position &pos) {
 
 void ApplicationEngine::unitAct(Creature *actingCreature) {
     if (posDistance(actingCreature->center, m_player->center) < 10) {
-        m_map->findPath(actingCreature, m_player->center, &actingCreature->path);
+        if (!m_map->findPath(actingCreature, m_player->center, &actingCreature->path)) {
+            std::cout << "creature " << actingCreature << " couldnt find path" << std::endl;
+            actingCreature->markedForDeath = true;
+            actingCreature->nextActionTime += .2;
+            return;
+        }
     }
     else if (actingCreature->path.empty()) {
-        m_map->findPath(actingCreature, m_player->center, &actingCreature->path);
+        if (!m_map->findPath(actingCreature, m_player->center, &actingCreature->path)) {
+            std::cout << "creature " << actingCreature << " couldnt find path" << std::endl;
+            actingCreature->markedForDeath = true;
+            actingCreature->nextActionTime += .2;
+            return;
+        }
     }
     
     if (actingCreature->path.front() == actingCreature->center)
@@ -261,7 +277,6 @@ void ApplicationEngine::unitAct(Creature *actingCreature) {
     
     if (!actingCreature->path.empty()) {
         Position nextStep = actingCreature->path.front();
-        std::cout << "trying to step to " << nextStep << std::endl;
         assert(posDistance(actingCreature->center, nextStep) < 3);
         
         if (unitCanMoveTo(actingCreature, nextStep)) {
@@ -285,9 +300,21 @@ void ApplicationEngine::UpdateAnimations(float td) {
     
     for (std::list<Creature *>::iterator i = m_creatures.begin(), iEnd = m_creatures.end(); i != iEnd; i++) {
         Creature *creature = *i;
+        creature->animate(currentTime);
         if (creature != m_player)
             while (creature->nextActionTime < currentTime)
                 unitAct(creature);
+    }
+    
+    for (std::list<Creature *>::iterator i = m_creatures.begin(), iEnd = m_creatures.end(); i != iEnd; ) {
+        if ((*i)->markedForDeath) {
+            std::list<Creature *>::iterator next = i;
+            next++;
+            killCreature(*i);
+            i = next;
+        }
+        else
+            i++;
     }
 }
 
