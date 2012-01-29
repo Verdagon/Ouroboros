@@ -26,6 +26,8 @@
 		3751BE8D14D54FD6009B55EB /* atsym.obj in Resources */ = {isa = PBXBuildFile; fileRef = 3751BE8C14D54FD6009B55EB /* atsym.obj */; };
 		379F073A14D5FC88001F2C5A /* Complex.vert in Sources */ = {isa = PBXBuildFile; fileRef = 379F073914D5FC88001F2C5A /* Complex.vert */; };
 		379F073C14D5FCC7001F2C5A /* Complex.vert in Resources */ = {isa = PBXBuildFile; fileRef = 379F073914D5FC88001F2C5A /* Complex.vert */; };
+		379F073E14D60704001F2C5A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 379F073D14D60703001F2C5A /* AVFoundation.framework */; };
+		379F074114D60961001F2C5A /* At3d-All.wav in Resources */ = {isa = PBXBuildFile; fileRef = 379F074014D60961001F2C5A /* At3d-All.wav */; };
 		394AFDB91406DE3200678710 /* charmap_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 394AFDB81406DE3200678710 /* charmap_white.png */; };
 		395BAE80140842490097282C /* ButtonB.png in Resources */ = {isa = PBXBuildFile; fileRef = 395BAE77140842490097282C /* ButtonB.png */; };
 		395BAE81140842490097282C /* ButtonBL.png in Resources */ = {isa = PBXBuildFile; fileRef = 395BAE78140842490097282C /* ButtonBL.png */; };
@@ -86,6 +88,8 @@
 		3751BE8A14D52B7E009B55EB /* rat.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rat.obj; sourceTree = "<group>"; };
 		3751BE8C14D54FD6009B55EB /* atsym.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = atsym.obj; sourceTree = "<group>"; };
 		379F073914D5FC88001F2C5A /* Complex.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Complex.vert; sourceTree = "<group>"; };
+		379F073D14D60703001F2C5A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		379F074014D60961001F2C5A /* At3d-All.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "At3d-All.wav"; sourceTree = "<group>"; };
 		394AFDB81406DE3200678710 /* charmap_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = charmap_white.png; sourceTree = "<group>"; };
 		394AFDBA1407231400678710 /* TextView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextView.cpp; sourceTree = "<group>"; };
 		394AFDBC1407232D00678710 /* TextView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TextView.hpp; sourceTree = "<group>"; };
@@ -145,6 +149,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				379F073E14D60704001F2C5A /* AVFoundation.framework in Frameworks */,
 				39E90AFB13C4DA3500D5035E /* OpenGLES.framework in Frameworks */,
 				39E90AFC13C4DA3500D5035E /* QuartzCore.framework in Frameworks */,
 				39E90AD313C4D5B600D5035E /* UIKit.framework in Frameworks */,
@@ -210,6 +215,14 @@
 			name = Objects;
 			sourceTree = "<group>";
 		};
+		379F073F14D60954001F2C5A /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				379F074014D60961001F2C5A /* At3d-All.wav */,
+			);
+			name = Sounds;
+			sourceTree = "<group>";
+		};
 		391205771410510200191A3B /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -228,6 +241,7 @@
 		391205911410516700191A3B /* ArtAssets */ = {
 			isa = PBXGroup;
 			children = (
+				379F073F14D60954001F2C5A /* Sounds */,
 				39CDA44E13FF472700958D83 /* Images */,
 				391205771410510200191A3B /* Models */,
 			);
@@ -307,6 +321,7 @@
 		39E90AD113C4D5B600D5035E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				379F073D14D60703001F2C5A /* AVFoundation.framework */,
 				39E90AF913C4DA1400D5035E /* OpenGLES.framework */,
 				39E90AF713C4D9EA00D5035E /* QuartzCore.framework */,
 				39E90AD213C4D5B600D5035E /* UIKit.framework */,
@@ -497,6 +512,7 @@
 				B10509F014D56DA700FE1227 /* sword.obj in Resources */,
 				B10509F114D56DA700FE1227 /* sword.png in Resources */,
 				B10509F214D56DA700FE1227 /* unitcube.obj in Resources */,
+				379F074114D60961001F2C5A /* At3d-All.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

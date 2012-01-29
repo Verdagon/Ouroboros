@@ -6,6 +6,8 @@
 
 @implementation GLView
 
+@synthesize player;
+
 const bool ForceES1 = false;
 
 + (Class) layerClass
@@ -73,6 +75,20 @@ const bool ForceES1 = false;
         displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(drawView:)];
         
         [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        
+        
+        // add audio
+        NSString *soundFilePath = [[NSBundle mainBundle] pathForResource:@"At3d-All" ofType:@"wav"];
+        NSURL *fileURL = [[NSURL alloc] initFileURLWithPath: soundFilePath];
+        AVAudioPlayer *newPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:nil];
+        [fileURL release];
+        self.player = newPlayer;
+        
+        
+        self.player.numberOfLoops = -1;
+        self.player.currentTime = 0;
+        self.player.volume = 1.0;
+        [self.player play];
     }
     
     return self;
