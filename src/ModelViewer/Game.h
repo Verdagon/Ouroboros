@@ -214,13 +214,15 @@ public:
     vec3 orientation;
     std::list<Position> path;
     IMesh *characterMesh;
-    std::map<Position, IMesh *, Position::Before> unitBlocksByOffset;
+//    std::map<Position, IMesh *, Position::Before> unitBlocksByOffset;
+    float nextActionTime;
     
     Creature(char character_, int radius_, const Position &center_) :
     character(character_),
     radius(radius_),
     center(center_),
-    orientation(0, 1, 0) {
+    orientation(0, 1, 0),
+    nextActionTime(0) {
         switch (character) {
             case '@': characterMesh = new Mesh("atsym.obj", "atsym.png"); break;
             case 'g': characterMesh = new Mesh("goblin.obj", "goblin.png"); break;
@@ -234,16 +236,16 @@ public:
         Position topLeft = center + topLeftOffsetForRadius(radius);
         Position area = areaForRadius(radius);
         
-        for (int x = 0; x < area.x; x++) {
-            for (int y = 0; y < area.y; y++) {
-                Position offset(x - (radius - 1), y - (radius - 1));
-                std::cout << "Offset: " << offset << std::endl;
-                Mesh *mesh = new Mesh("unitcube.obj", "blank.png");
-                mesh->size = 1;
-                unitBlocksByOffset[offset] = mesh;
-                m_meshList.push_back(mesh);
-            }
-        }
+//        for (int x = 0; x < area.x; x++) {
+//            for (int y = 0; y < area.y; y++) {
+//                Position offset(x - (radius - 1), y - (radius - 1));
+//                std::cout << "Offset: " << offset << std::endl;
+//                Mesh *mesh = new Mesh("unitcube.obj", "blank.png");
+//                mesh->size = 1;
+//                unitBlocksByOffset[offset] = mesh;
+//                m_meshList.push_back(mesh);
+//            }
+//        }
         
     }
     
@@ -258,14 +260,14 @@ public:
         center = pos;
         characterMesh->meshMtx = mat4::Translate(center.x, -center.y, 0);
         
-        for (std::map<Position, IMesh *>::iterator i = unitBlocksByOffset.begin(), iEnd = unitBlocksByOffset.end(); i != iEnd; i++) {
-            Position blockOffset = i->first;
-            Position blockPos = pos + blockOffset;
-            i->second->meshMtx = mat4::Identity();
-            i->second->meshMtx *= mat4::Translate(1, 1, 1);
-            i->second->meshMtx *= mat4::Scale(.5);
-            i->second->meshMtx *= mat4::Translate(blockPos.x, -blockPos.y, 0);
-        }
+//        for (std::map<Position, IMesh *>::iterator i = unitBlocksByOffset.begin(), iEnd = unitBlocksByOffset.end(); i != iEnd; i++) {
+//            Position blockOffset = i->first;
+//            Position blockPos = pos + blockOffset;
+//            i->second->meshMtx = mat4::Identity();
+//            i->second->meshMtx *= mat4::Translate(1, 1, 1);
+//            i->second->meshMtx *= mat4::Scale(.5);
+//            i->second->meshMtx *= mat4::Translate(blockPos.x, -blockPos.y, 0);
+//        }
     }
     
     void setVisible(bool visible) {

@@ -50,6 +50,7 @@ private:
     Map *m_map;
     std::list<Creature *> m_creatures;
     Creature *m_player;
+    float currentTime;
 };
 
 #endif
@@ -59,6 +60,8 @@ IApplicationEngine* CreateApplicationEngine(DeviceType deviceType, IRenderingEng
 }
 
 ApplicationEngine::ApplicationEngine(DeviceType deviceType, IRenderingEngine* renderingEngine, IResourceManager* resourceManager) {
+    currentTime = 0;
+    
     m_deviceType = deviceType;
     if (deviceType == DeviceTypeIphone) {
         cout << "App loaded on iphone\n";
@@ -268,9 +271,12 @@ void ApplicationEngine::unitAct(Creature *actingCreature) {
             m_map->placeCreature(actingCreature);
         }
     }
+    
+    actingCreature->nextActionTime += .2;
 }
 
 void ApplicationEngine::UpdateAnimations(float td) {
+    currentTime += td;
     
     
     setPlayerAndCameraPos(Position(m_player->center.x + m_direction.x, m_player->center.y + m_direction.y), false);
@@ -278,8 +284,10 @@ void ApplicationEngine::UpdateAnimations(float td) {
     //m_curController->Tic(td);
     
     for (std::list<Creature *>::iterator i = m_creatures.begin(), iEnd = m_creatures.end(); i != iEnd; i++) {
-        if (*i != m_player)
-            unitAct(*i);
+        Creature *creature = *i;
+        if (creature != m_player)
+            while (creature->nextActionTime < currentTime)
+                unitAct(creature);
     }
 }
 

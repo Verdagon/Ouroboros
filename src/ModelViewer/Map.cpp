@@ -25,20 +25,20 @@ grid(size) {
             tiles->visibleMeshes.push_back(mesh);
             
             
-            if (!(*tiles)[TileCoord(row, col)].walkable) {
-                for (int x = 0; x < tileLengthInMapUnits; x++) {
-                    for (int y = 0; y < tileLengthInMapUnits; y++) {
-                        Position blockPos(col * tileLengthInMapUnits + x, row * tileLengthInMapUnits + y);
-                        Mesh *mesh = new Mesh("unitcube.obj", "blank.png");
-                        mesh->size = 1;
-                        mesh->meshMtx = mat4::Identity();
-                        mesh->meshMtx *= mat4::Translate(1, 1, 1);
-                        mesh->meshMtx *= mat4::Scale(.5);
-                        mesh->meshMtx *= mat4::Translate(blockPos.x, -blockPos.y, 0);
-                        tiles->visibleMeshes.push_back(mesh);
-                    }
-                }
-            }
+//            if (!(*tiles)[TileCoord(row, col)].walkable) {
+//                for (int x = 0; x < tileLengthInMapUnits; x++) {
+//                    for (int y = 0; y < tileLengthInMapUnits; y++) {
+//                        Position blockPos(col * tileLengthInMapUnits + x, row * tileLengthInMapUnits + y);
+//                        Mesh *mesh = new Mesh("unitcube.obj", "blank.png");
+//                        mesh->size = 1;
+//                        mesh->meshMtx = mat4::Identity();
+//                        mesh->meshMtx *= mat4::Translate(1, 1, 1);
+//                        mesh->meshMtx *= mat4::Scale(.5);
+//                        mesh->meshMtx *= mat4::Translate(blockPos.x, -blockPos.y, 0);
+//                        tiles->visibleMeshes.push_back(mesh);
+//                    }
+//                }
+//            }
             
         }
     }
