@@ -17,7 +17,7 @@ public:
     list<IMesh *>* getMeshes();
 protected:
     list<IMesh *> m_meshList;
-    Plane *m_plane;
+    IMesh *m_plane;
     ivec2 m_dimensions;
     ivec2 m_loc;
 };

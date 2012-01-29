@@ -18,6 +18,7 @@ Plane::Plane(Plane *previousPlane) : Mesh("Plane", previousPlane->getTextureName
     m_location = previousPlane->m_location;
     meshMtx = mat4::Translate(m_location.x, m_location.y, m_location.z);
     meshRef = previousPlane->meshRef;
+    textureRef = previousPlane->textureRef;
     textureMtx = previousPlane->textureMtx;
     color = previousPlane->color;
     normalType = LOAD_NORMAL_FACE;
