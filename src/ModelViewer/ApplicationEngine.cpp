@@ -149,16 +149,14 @@ void ApplicationEngine::setPlayerAndCameraPos(Position pos) {
     
     m_map->placeCreature(m_player);
     
-    m_player->center.x = pos.x;
-    m_player->center.y = pos.y;
     std::cout << "Putting player at " << pos << std::endl;
-    m_player->setLoc(vec3(m_player->center.x, -m_player->center.y, 0));
+    m_player->setCenter(pos);
     
     m_map->tiles->setLightPosition(m_map->tileCoordAtPosition(pos));
     
-    m_camera->fwd = vec3(0, 25, -100);
-    m_camera->eye = vec3(m_player->center.x, -m_player->center.y - 25, 100);
-    m_camera->ref = vec3(m_player->center.x, -m_player->center.y, 0);
+    m_camera->ref = vec3(m_player->center.x - (m_player->radius), -(m_player->center.y - (m_player->radius)), 0);
+    m_camera->fwd = vec3(0, 15, -30);
+    m_camera->eye = m_camera->ref - m_camera->fwd;
     m_camera->up = vec3(0, 0, 1);
 }
 
