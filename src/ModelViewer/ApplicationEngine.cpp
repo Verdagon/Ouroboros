@@ -50,6 +50,7 @@ private:
     Map *m_map;
     std::list<Creature *> m_creatures;
     Creature *m_player;
+    float currentTime;
 };
 
 #endif
@@ -59,6 +60,8 @@ IApplicationEngine* CreateApplicationEngine(DeviceType deviceType, IRenderingEng
 }
 
 ApplicationEngine::ApplicationEngine(DeviceType deviceType, IRenderingEngine* renderingEngine, IResourceManager* resourceManager) {
+    currentTime = 0;
+    
     m_deviceType = deviceType;
     if (deviceType == DeviceTypeIphone) {
         cout << "App loaded on iphone\n";
@@ -104,12 +107,12 @@ void ApplicationEngine::Initialize(int width, int height) {
     
     
     GenerateOptions options = {
-        10, 10,
-        1357,
-        2,
+        20, 30,
+        1347,
         3,
-        2,
-        3,
+        4,
+        4,
+        6,
         1,
         20,
         Tile(false, '#'),
@@ -128,28 +131,20 @@ void ApplicationEngine::Initialize(int width, int height) {
         int playerRadius = 3;
         Position playerCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(playerRadius);
         m_player = new Creature('@', playerRadius, playerCenter);
-        m_creatures.push_back(m_player);
-        
-        m_map->placeCreature(m_player);
-        m_renderingEngine->addObject(m_player);
-        m_objects3d.push_back(m_player);
+        addCreature(m_player);
         
         setPlayerAndCameraPos(playerCenter, true);
     }
     
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 50; i++) {
         int goblinRadius = 2;
         Position goblinCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(goblinRadius);
         if (!m_map->areaIsWalkable(goblinCenter, goblinRadius))
             continue;
         
-        Creature *goblin = new Creature('g', goblinRadius, goblinCenter);
+        Creature *goblin = new Creature(i % 2 ? 'g' : 'r', goblinRadius, goblinCenter);
         goblin->setCenter(goblinCenter);
-        m_creatures.push_back(goblin);
-        
-        m_map->placeCreature(goblin);
-        m_renderingEngine->addObject(goblin);
-        m_objects3d.push_back(goblin);
+        addCreature(goblin);
     }
     
 //    Object *myMesh1 = new Object("atsym.obj", "atsym.png");
@@ -163,10 +158,18 @@ void ApplicationEngine::Initialize(int width, int height) {
 //    m_objects3d.push_back(myMesh2);
 }
 
+void ApplicationEngine::addCreature(Creature *creature) {
+    
+    m_creatures.push_back(creature);
+    
+    m_map->placeCreature(creature);
+    m_renderingEngine->addObject(creature);
+    m_objects3d.push_back(creature);
+}
+
 void ApplicationEngine::unitAttack(Creature *attackingCreature) {
     Position hitBoxOrigin = attackingCreature->center + topLeftOffsetForRadius(attackingCreature->radius + 2);
     Position hitBoxSize = areaForRadius(attackingCreature->radius + 2);
-    
     
     for (int x = hitBoxOrigin.x; x < hitBoxOrigin.x + hitBoxSize.x; x++) {
         for (int y = hitBoxOrigin.y; y < hitBoxOrigin.y + hitBoxSize.y; y++) {
@@ -177,13 +180,11 @@ void ApplicationEngine::unitAttack(Creature *attackingCreature) {
                 continue;
             
             Creature *victim = m_map->grid[Position(x, y)].inhabitingCreature;
-            victim->setVisible(false);
-            m_map->removeCreature(victim);
-            std::list<Creature *>::iterator victimIter = std::find(m_creatures.begin(), m_creatures.end(), victim);
-            assert(victimIter != m_creatures.end());
-            m_creatures.erase(victimIter);
+            victim->markedForDeath = true;
         }
     }
+    
+    attackingCreature->startSpinning(currentTime);
     
 //    inline Position areaForRadius(int radius) {
 //        int length = radius * 2 - 1;
@@ -193,6 +194,14 @@ void ApplicationEngine::unitAttack(Creature *attackingCreature) {
 //    inline Position topLeftOffsetForRadius(int radius) {
 //        return Position(-(radius - 1), -(radius - 1));
 //    }
+}
+
+void ApplicationEngine::killCreature(Creature *victim) {
+    victim->setVisible(false);
+    m_map->removeCreature(victim);
+    std::list<Creature *>::iterator victimIter = std::find(m_creatures.begin(), m_creatures.end(), victim);
+    assert(victimIter != m_creatures.end());
+    m_creatures.erase(victimIter);
 }
 
 void ApplicationEngine::setPlayerAndCameraPos(Position pos, bool force) {
@@ -247,14 +256,26 @@ bool ApplicationEngine::unitCanMoveTo(Creature *creature, const Position &pos) {
 
 void ApplicationEngine::unitAct(Creature *actingCreature) {
     if (posDistance(actingCreature->center, m_player->center) < 10) {
-        m_map->findPath(actingCreature, m_player->center, &actingCreature->path);
+        if (!m_map->findPath(actingCreature, m_player->center, &actingCreature->path)) {
+            std::cout << "creature " << actingCreature << " couldnt find path" << std::endl;
+            actingCreature->markedForDeath = true;
+            actingCreature->nextActionTime += .2;
+            return;
+        }
     }
     else if (actingCreature->path.empty()) {
-        m_map->findPath(actingCreature, m_player->center, &actingCreature->path);
+        if (!m_map->findPath(actingCreature, m_player->center, &actingCreature->path)) {
+            std::cout << "creature " << actingCreature << " couldnt find path" << std::endl;
+            actingCreature->markedForDeath = true;
+            actingCreature->nextActionTime += .2;
+            return;
+        }
     }
     
+    if (actingCreature->path.front() == actingCreature->center)
+        actingCreature->path.pop_front();
+    
     if (!actingCreature->path.empty()) {
-//        std::cout << "i have a path, lets do it!" << std::endl;
         Position nextStep = actingCreature->path.front();
         assert(posDistance(actingCreature->center, nextStep) < 3);
         
@@ -265,9 +286,12 @@ void ApplicationEngine::unitAct(Creature *actingCreature) {
             m_map->placeCreature(actingCreature);
         }
     }
+    
+    actingCreature->nextActionTime += .2;
 }
 
 void ApplicationEngine::UpdateAnimations(float td) {
+    currentTime += td;
     
     
     setPlayerAndCameraPos(Position(m_player->center.x + m_direction.x, m_player->center.y + m_direction.y), false);
@@ -275,8 +299,22 @@ void ApplicationEngine::UpdateAnimations(float td) {
     //m_curController->Tic(td);
     
     for (std::list<Creature *>::iterator i = m_creatures.begin(), iEnd = m_creatures.end(); i != iEnd; i++) {
-        if (*i != m_player)
-            unitAct(*i);
+        Creature *creature = *i;
+        creature->animate(currentTime);
+        if (creature != m_player)
+            while (creature->nextActionTime < currentTime)
+                unitAct(creature);
+    }
+    
+    for (std::list<Creature *>::iterator i = m_creatures.begin(), iEnd = m_creatures.end(); i != iEnd; ) {
+        if ((*i)->markedForDeath) {
+            std::list<Creature *>::iterator next = i;
+            next++;
+            killCreature(*i);
+            i = next;
+        }
+        else
+            i++;
     }
 }
 

@@ -4,6 +4,7 @@
 #import "Interfaces.h"
 #import "Mesh.h"
 #import "OrderedPairMap.h"
+//#import "Animation.h"
 
 #include <iostream>
 #include <cassert>
@@ -11,6 +12,7 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <map>
 
 class TileCoord {
 public:
@@ -210,46 +212,53 @@ public:
     const char character;
     int radius; // if radius is 1, the creature inhabits a 1x1 square. If its 2, the creature inhabits a 3x3 square, if its 3, inhabits 5x5 square, etc.
     Position center;
-    vec3 orientation;
+    
+    float spinBegin, spinEnd;
+    
     std::list<Position> path;
     IMesh *characterMesh;
-//    std::map<Position, IMesh *> unitBlocksByOffset;
+//    std::map<Position, IMesh *, Position::Before> unitBlocksByOffset;
+    float nextActionTime;
+    bool markedForDeath;
+    
+    void startSpinning(float now) {
+        spinBegin = now;
+        spinEnd = now + .5;
+    }
     
     Creature(char character_, int radius_, const Position &center_) :
     character(character_),
     radius(radius_),
     center(center_),
-    orientation(0, 1, 0) {
+    spinBegin(0),
+    spinEnd(0),
+    nextActionTime(0),
+    markedForDeath(false) {
         switch (character) {
-            case '@': {
-                IMesh *mesh = new Mesh("atsym.obj", "atsym.png");
-                mesh->size = 2;
-                m_meshList.push_back(mesh);
-            } break;
-            
-            case 'g': {
-                IMesh *mesh = new Mesh("goblin.obj", "goblin.png");
-                mesh->size = 2;
-                m_meshList.push_back(mesh);
-            } break;
-            
-            default:
-                assert(false);
-                break;
+            case '@': characterMesh = new Mesh("atsym.obj", "atsym.png"); break;
+            case 'g': characterMesh = new Mesh("goblin.obj", "goblin.png"); break;
+            case 'r': characterMesh = new Mesh("rat.obj", "rat.png"); break;
+            default: assert(false); break;
         }
         
-//        Position topLeft = center + topLeftOffsetForRadius(radius);
-//        Position area = areaForRadius(radius);
-//        
+        
+        characterMesh->size = 2;
+        m_meshList.push_back(characterMesh);
+        
+        Position topLeft = center + topLeftOffsetForRadius(radius);
+        Position area = areaForRadius(radius);
+        
 //        for (int x = 0; x < area.x; x++) {
 //            for (int y = 0; y < area.y; y++) {
 //                Position offset(x - (radius - 1), y - (radius - 1));
-//                Mesh *mesh = new Mesh("unitblock.obj", "blank.png");
+//                std::cout << "Offset: " << offset << std::endl;
+//                Mesh *mesh = new Mesh("unitcube.obj", "blank.png");
 //                mesh->size = 1;
 //                unitBlocksByOffset[offset] = mesh;
 //                m_meshList.push_back(mesh);
 //            }
 //        }
+        
     }
     
     ~Creature() {
@@ -261,21 +270,18 @@ public:
     
     void setCenter(const Position &pos) {
         center = pos;
-        for (list<IMesh *>::iterator i = m_meshList.begin(), iEnd = m_meshList.end(); i != iEnd; i++) {
-            IMesh *mesh = *i;
-            mesh->meshMtx = mat4::Identity();
-//            mesh->meshMtx *= mat4::Rotate(-90, vec3(1, 0, 0));
-            mesh->meshMtx *= mat4::Translate(center.x - (radius), -(center.y - (radius)), 0);
+        characterMesh->meshMtx = mat4::Translate(center.x, -center.y, 0);
+    }
+    
+    void animate(float t) {
+        if (spinBegin < t && t < spinEnd) {
+            characterMesh->meshMtx = mat4::Rotate((t - spinBegin) / (spinEnd - spinBegin) * 720, vec3(0, 0, 1));
         }
-//        adding unit grids        
-//        for (int x = topLeft.x; x < topLeft.x + area.x; x++) {
-//            for (int y = topLeft.y; y < topLeft.y + area.y; y++) {
-//                Position 
-//                Object *object = new Object("unitblock.obj", "blank.png");
-//                mesh->size = 1;
-//                mesh->meshMtx
-//            }
-//        }
+        else {
+            characterMesh->meshMtx = mat4::Identity();
+        }
+        
+        characterMesh->meshMtx *= mat4::Translate(center.x, -center.y, 0);
     }
     
     void setVisible(bool visible) {
