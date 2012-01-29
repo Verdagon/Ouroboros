@@ -7,9 +7,10 @@ Object::Object() {
 }
 
 Object::Object(string fileName, string textureName) {
+    
     m_meshList = list<IMesh *>(0);
-    Mesh *mesh = new Mesh(fileName, textureName);
-    m_meshList.push_back(mesh);
+    m_mesh = new Mesh(fileName, textureName);
+    m_meshList.push_back(m_mesh);
 }
 
 Object::~Object() {
@@ -17,6 +18,10 @@ Object::~Object() {
     for (mesh = m_meshList.begin(); mesh != m_meshList.end(); ++mesh) {
         delete *mesh;
     }
+}
+
+void Object::setLoc(vec3 loc) {
+    m_mesh->meshMtx = mat4::Translate(loc.x, loc.y, loc.z);
 }
 
 list<IMesh *>* Object::getMeshes() {

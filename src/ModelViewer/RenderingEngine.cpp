@@ -286,7 +286,7 @@ void RenderingEngine::render(list<IObject *> &objects3d, list<IObject *> &object
     // Set the projection matrix
     float h = 4.0f * m_mainScreenSize.x / m_mainScreenSize.y;
     
-    mat4 projectionMatrix = mat4::Frustum(-h / 2, h / 2, -2, 2, 4, 200);
+    mat4 projectionMatrix = mat4::Frustum(-h / 2, h / 2, -2, 2, 4, 2000);
     projectionMatrix = mat4::LookAt(projectionMatrix, m_camera->eye, m_camera->ref, m_camera->up);
     glUniformMatrix4fv(m_uniforms.projection, 1, 0, projectionMatrix.Pointer());
 

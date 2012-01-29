@@ -4,6 +4,10 @@
 #include "Interfaces.h"
 #include "Plane.h"
 
+#define SIZE 40
+#define SCALE 0.125
+#define WORD_TOTAL_SIZE 32
+
 class TextObject : public IObject {
 public:
     TextObject();
@@ -13,7 +17,7 @@ public:
     list<IMesh *>* getMeshes();
 protected:
     list<IMesh *> m_meshList;
-    Plane *m_plane;
+    IMesh *m_plane;
     ivec2 m_dimensions;
     ivec2 m_loc;
 };
