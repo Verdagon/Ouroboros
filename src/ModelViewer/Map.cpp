@@ -11,31 +11,35 @@ grid(size) {
             Mesh *mesh = NULL;
             
             switch ((*tiles)[TileCoord(row, col)].character) {
-                case '.':
-                    mesh = new Mesh("blank.obj", "blank.png");
-                    break;
-                    
-                case '#':
-                    mesh = new Mesh("pound.obj", "pound.png");
-                    break;
-                    
-                default:
-                    assert(false);
-                    break;
+                case '.': mesh = new Mesh("blank.obj", "blank.png"); break;
+                case '#': mesh = new Mesh("pound.obj", "pound.png"); break;
+                default: assert(false); break;
             }
             
             mesh->size = 2;
             mesh->meshMtx = mat4::Identity();
-            //            mesh->meshMtx *= mat4::Scale(2);
-//            std::cout << "Setting " << TileCoord(row, col) << " to screen coords " << col * tileLengthInMapUnits << "," << row * tileLengthInMapUnits << std::endl;
+            mesh->meshMtx *= mat4::Translate(4, -3, 0);
             mesh->meshMtx *= mat4::Translate(col * tileLengthInMapUnits, -row * tileLengthInMapUnits, 0);
-            //            mesh->meshMtx *= mat4::Scale(tileLengthInMapUnits);
-            //            mesh->meshMtx *= mat4::Scale(.5);
-            //            mesh->meshMtx *= mat4::Translate(1, 1, 1);
-//            std::cout << col * tileLengthInMapUnits << " " << row * tileLengthInMapUnits << std::endl;
             
             (*tiles)[TileCoord(row, col)].mesh = mesh;
             tiles->visibleMeshes.push_back(mesh);
+            
+            
+            if (!(*tiles)[TileCoord(row, col)].walkable) {
+                for (int x = 0; x < tileLengthInMapUnits; x++) {
+                    for (int y = 0; y < tileLengthInMapUnits; y++) {
+                        Position blockPos(col * tileLengthInMapUnits + x, row * tileLengthInMapUnits + y);
+                        Mesh *mesh = new Mesh("unitcube.obj", "blank.png");
+                        mesh->size = 1;
+                        mesh->meshMtx = mat4::Identity();
+                        mesh->meshMtx *= mat4::Translate(1, 1, 1);
+                        mesh->meshMtx *= mat4::Scale(.5);
+                        mesh->meshMtx *= mat4::Translate(blockPos.x, -blockPos.y, 0);
+                        tiles->visibleMeshes.push_back(mesh);
+                    }
+                }
+            }
+            
         }
     }
     

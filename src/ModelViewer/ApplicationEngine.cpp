@@ -35,6 +35,7 @@ private:
     void unitAttack(Creature *attackingCreature);
     void unitAct(Creature *actingCreature);
     bool unitCanMoveTo(Creature *unit, const Position &pos);
+    void addCreature(Creature *creature);
     
     ivec2 m_mainScreenSize;
     vec2 m_lastLoc;
@@ -126,11 +127,7 @@ void ApplicationEngine::Initialize(int width, int height) {
         int playerRadius = 3;
         Position playerCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(playerRadius);
         m_player = new Creature('@', playerRadius, playerCenter);
-        m_creatures.push_back(m_player);
-        
-        m_map->placeCreature(m_player);
-        m_renderingEngine->addObject(m_player);
-        m_objects3d.push_back(m_player);
+        addCreature(m_player);
         
         setPlayerAndCameraPos(playerCenter, true);
     }
@@ -143,11 +140,7 @@ void ApplicationEngine::Initialize(int width, int height) {
         
         Creature *goblin = new Creature('g', goblinRadius, goblinCenter);
         goblin->setCenter(goblinCenter);
-        m_creatures.push_back(goblin);
-        
-        m_map->placeCreature(goblin);
-        m_renderingEngine->addObject(goblin);
-        m_objects3d.push_back(goblin);
+        addCreature(goblin);
     }
     
 //    Object *myMesh1 = new Object("atsym.obj", "atsym.png");
@@ -159,6 +152,15 @@ void ApplicationEngine::Initialize(int width, int height) {
 //    myMesh2->setLoc(vec3(10, 0, 0));
 //    m_renderingEngine->addObject(myMesh2);
 //    m_objects3d.push_back(myMesh2);
+}
+
+void ApplicationEngine::addCreature(Creature *creature) {
+    
+    m_creatures.push_back(creature);
+    
+    m_map->placeCreature(creature);
+    m_renderingEngine->addObject(creature);
+    m_objects3d.push_back(creature);
 }
 
 void ApplicationEngine::unitAttack(Creature *attackingCreature) {
@@ -250,9 +252,12 @@ void ApplicationEngine::unitAct(Creature *actingCreature) {
         m_map->findPath(actingCreature, m_player->center, &actingCreature->path);
     }
     
+    if (actingCreature->path.front() == actingCreature->center)
+        actingCreature->path.pop_front();
+    
     if (!actingCreature->path.empty()) {
-//        std::cout << "i have a path, lets do it!" << std::endl;
         Position nextStep = actingCreature->path.front();
+        std::cout << "trying to step to " << nextStep << std::endl;
         assert(posDistance(actingCreature->center, nextStep) < 3);
         
         if (unitCanMoveTo(actingCreature, nextStep)) {
