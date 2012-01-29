@@ -90,10 +90,6 @@ void ApplicationEngine::Initialize(int width, int height) {
     m_mainScreenSize = ivec2(width, height);
     
     m_camera = new Camera();
-    m_camera->fwd = vec3(-25, 0, -100);
-    m_camera->eye = vec3(25, 0, 100);
-    m_camera->ref = vec3(0, 0, 0);
-    m_camera->up = vec3(0, 0, 1);
     
     m_renderingEngine->setCamera(m_camera);
     m_renderingEngine->Initialize(width, height);
@@ -133,15 +129,20 @@ void ApplicationEngine::Initialize(int width, int height) {
 //        m_objects3d.push_back(m_player);
 //    }
     
-    Object *myMesh1 = new Object("atsym.obj", "atsym.png");
+    Object *myMesh1 = new Object("rat.obj", "rat.png");
     myMesh1->setLoc(vec3(0, 0, 0));
     m_renderingEngine->addObject(myMesh1);
     m_objects3d.push_back(myMesh1);
     
-    Object *myMesh2 = new Object("atsym.obj", "atsym.png");
+    Object *myMesh2 = new Object("goblin.obj", "goblin.png");
     myMesh2->setLoc(vec3(10, 0, 0));
     m_renderingEngine->addObject(myMesh2);
     m_objects3d.push_back(myMesh2);
+    
+    Object *myMesh3 = new Object("atsym.obj", "atsym.png");
+    myMesh3->setLoc(vec3(0, 10, 0));
+    m_renderingEngine->addObject(myMesh3);
+    m_objects3d.push_back(myMesh3);
 }
 
 void ApplicationEngine::setPlayerAndCameraPos(Position pos) {
@@ -172,6 +173,8 @@ void ApplicationEngine::UpdateAnimations(float td) {
 }
 
 void ApplicationEngine::OnFingerUp(vec2 location) {
+    
+    /*
     // todo: autodetect w and h
     int width = 320;
     int height = 480;
@@ -191,7 +194,7 @@ void ApplicationEngine::OnFingerUp(vec2 location) {
     std::cout << "moving by " << deltaX << "," << deltaY << std::endl;
     
     setPlayerAndCameraPos(Position(m_player->center.x + deltaX, m_player->center.y + deltaY));
-    
+    */
 }
 
 void ApplicationEngine::OnFingerDown(vec2 location) {
