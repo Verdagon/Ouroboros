@@ -1,6 +1,8 @@
 #ifndef GAME_H_
 #define GAME_H_
 
+#import "Interfaces.h"
+#import "Mesh.h"
 #import "OrderedPairMap.h"
 
 #include <iostream>
@@ -177,8 +179,9 @@ public:
     bool isWalkable() const { return tile->walkable && inhabitingCreature == NULL; }
 };
 
-class Creature {
+class Creature : public IObject {
 public:
+    const char character;
     int radius; // if radius is 1, the creature inhabits a 1x1 square. If its 2, the creature inhabits a 3x3 square, if its 3, inhabits 5x5 square, etc.
     Position center;
     
@@ -191,9 +194,42 @@ public:
         return Position(-(radius - 1), -(radius - 1));
     }
     
-    Creature(int radius_, const Position &center_) :
+    Creature(char character_, int radius_, const Position &center_) :
+    character(character_),
     radius(radius_),
-    center(center_) { }
+    center(center_) {
+        switch (character) {
+            case '@': {
+                IMesh *mesh = new Mesh("atsym.obj", "atsym.png");
+                mesh->meshMtx = mat4::Translate(center.x, center.y, 0);
+                m_meshList.push_back(mesh);
+            } break;
+                
+            default:
+                assert(false);
+                break;
+        }
+    }
+    
+    ~Creature() {
+        list<IMesh *>::iterator mesh;
+        for (mesh = m_meshList.begin(); mesh != m_meshList.end(); ++mesh) {
+            delete *mesh;
+        }
+    }
+    
+    void setLoc(vec3 loc) {
+        for (list<IMesh *>::iterator i = m_meshList.begin(), iEnd = m_meshList.end(); i != iEnd; i++) {
+            IMesh *mesh = *i;
+            mesh->meshMtx = mat4::Translate(loc.x, loc.y, loc.z);
+        }
+    }
+    
+    list<IMesh *> m_meshList;
+    
+    virtual list<IMesh *>* getMeshes() {
+        return &m_meshList;
+    }
 };
 
 
@@ -203,7 +239,7 @@ inline float distance(const Position &a, const Position &b) {
 
 
 
-class Map {
+class Map : public IObject {
 public:
     const int tileLengthInMapUnits;
     const MapTiles *const tiles;
@@ -228,6 +264,11 @@ public:
     
     void placeCreature(Creature *creature);
     
+    list<IMesh *> m_meshList;
+    virtual list<IMesh *>* getMeshes() {
+        return &m_meshList;
+    }
+
 private:
     bool nextToAnyCalculatedPositions(const Position &currentPosition);
     

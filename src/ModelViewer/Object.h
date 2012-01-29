@@ -12,7 +12,6 @@ public:
     list<IMesh *>* getMeshes();
 protected:
     list<IMesh *> m_meshList;
-    vec3 m_loc;
     IMesh *m_mesh;
 };
 

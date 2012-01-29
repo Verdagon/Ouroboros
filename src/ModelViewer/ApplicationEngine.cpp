@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Object.h"
 #include "TextObject.h"
+#include "Game.h"
 #include <iostream>
 #include <fstream>
 
@@ -38,6 +39,8 @@ private:
     list<IObject *> m_objects2d;
     IRenderingEngine* m_renderingEngine;
     IResourceManager* m_resourceManager;
+    Map *m_map;
+    std::list<Creature *> m_creatures;
 };
 
 #endif
@@ -61,6 +64,50 @@ ApplicationEngine::ApplicationEngine(DeviceType deviceType, IRenderingEngine* re
     m_resourceManager = resourceManager;
     m_objects3d = list<IObject *>(0);
     m_objects2d = list<IObject *>(0);
+    
+    GenerateOptions options = {
+        10, 10,
+        1337,
+        2,
+        2,
+        6,
+        6,
+        1,
+        10,
+        Tile(false, '#'),
+        Tile(true, '.')
+    };
+    MapTiles *mapTiles = generateMap(options);
+    
+//    displayMapTiles(*mapTiles);
+    
+    m_map = new Map(8, mapTiles);
+//    
+    m_renderingEngine->addObject(m_map);
+    m_objects3d.push_back(m_map);
+//
+    {
+        int playerRadius = 3;
+        Position playerCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(playerRadius);
+        Creature *player = new Creature('@', playerRadius, playerCenter);
+        player->setLoc(vec3(10, 0, 0));
+        
+        m_map->placeCreature(player);
+        
+        m_renderingEngine->addObject(player);
+        m_objects3d.push_back(player);
+    }
+    
+//    Position destination = map.findCenterOfRandomWalkableAreaOfRadius(playerRadius);
+//    
+//    std::cout << "player is at " << playerCenter << " going to travel to " << destination << std::endl;
+//    
+//    std::list<Position> path;
+//    if (!map.findPath(player, destination, &path))
+//        assert(false);
+//    
+//    for (std::list<Position>::iterator i = path.begin(), iEnd = path.end(); i != iEnd; i++)
+//        std::cout << "step: " << *i << std::endl;
 }
 
 ApplicationEngine::~ApplicationEngine() {
@@ -77,12 +124,11 @@ void ApplicationEngine::Initialize(int width, int height) {
     newObject->setLoc(vec3(20, 0, 0));
     m_renderingEngine->addObject(newObject);
     m_objects3d.push_back(newObject);
-    
-    newObject = new Object("pound.obj", "pound.png");
-    newObject->setLoc(vec3(0, 0, 0));
-    m_renderingEngine->addObject(newObject);
-    m_objects3d.push_back(newObject);
-    
+//    
+//    newObject = new Object("pound.obj", "pound.png");
+//    newObject->setLoc(vec3(-20, 0, 0));
+//    m_renderingEngine->addObject(newObject);
+//    m_objects3d.push_back(newObject);
     
     //m_testText = new TextObject(ivec2(40, 40), ivec2(0, 0));
     //m_renderingEngine->addObject(m_testText);
