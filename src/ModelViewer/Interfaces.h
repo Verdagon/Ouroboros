@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include <string>
+#include <iostream>
 
 using std::vector;
 using std::list;

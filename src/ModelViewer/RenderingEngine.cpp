@@ -390,72 +390,6 @@ void RenderingEngine::render(list<IObject *> &objects3d, list<IObject *> &object
     }
     
     glDisable(GL_BLEND);
-    
-    /*
-    // Replace this
-    int width, height;
-    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &width);
-    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &height);
-    
-    // Set the main viewport.
-    glViewport(0, 0, width, height);*/
-    
-    /*
-    vector<Visual> visuals = vector<Visual>(0);
-    m_view->GetVisuals(&visuals);
-    vector<Visual>::iterator visual = visuals.begin();
-    while (visual != visuals.end()) {
-        if (m_curGroup != visual->Group) {
-            m_curGroup = visual->Group;
-            
-            //Set the Group projection
-            //mat4 projection = m_drawgroups[m_curGroup].Projection;
-            mat4 projection = m_view->GetProjection(m_curGroup);
-            glUniformMatrix4fv(m_uniforms.Projection, 1, 0, projection.Pointer());
-            
-            //Set the Group translation
-            //m_curModelView = m_drawgroups[m_curGroup].Translation;
-            m_curModelView = m_view->GetTranslation(m_curGroup);
-        }
-        
-        //Apply the visual translation
-        mat4 modelview = visual->Translation * m_curModelView;
-        glUniformMatrix4fv(m_uniforms.Modelview, 1, 0, modelview.Pointer());
-        
-        
-        // Set the normal matrix. (use for lighting)
-        //mat3 normalMatrix = modelview.ToMat3();
-        //glUniformMatrix3fv(m_uniforms.NormalMatrix, 1, 0, normalMatrix.Pointer());
-        
-        // Set the diffuse color.
-        glVertexAttrib4f(m_attributes.DiffuseMaterial, 1, 1, 1, 1);
-        
-        //Set the blending mode
-        SetBlending(visual->Mode);
-        
-        // Draw the mesh.
-        //int stride = sizeof(vec3) + sizeof(vec3) + sizeof(vec2);
-        int stride = sizeof(vec3) + sizeof(vec2);
-        //const GLvoid* normalOffset = (const GLvoid*) sizeof(vec3);
-        //const GLvoid* texCoordOffset = (const GLvoid*) (2 * sizeof(vec3));
-        const GLvoid* texCoordOffset = (const GLvoid*) (sizeof(vec3));
-        GLint position = m_attributes.Position;
-        //GLint normal = m_attributes.Normal;
-        GLint texCoord = m_attributes.TextureCoord;
-        
-        const Mesh& mesh = m_drawgroups[m_curGroup].meshes[visual->Mesh];
-        const Texture& texture = m_drawgroups[m_curGroup].textures[visual->Texture];
-        
-        glBindTexture(GL_TEXTURE_2D, texture.Texture);
-        glBindBuffer(GL_ARRAY_BUFFER, mesh.VertexBuffer);
-        glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, stride, 0);
-        //glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, stride, normalOffset);
-        glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, stride, texCoordOffset);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndexBuffer);
-        glDrawElements(GL_TRIANGLES, mesh.IndexCount, GL_UNSIGNED_SHORT, 0);
-        
-        visual++;
-    }*/
 }
 
 GLuint RenderingEngine::buildShader(string* source, GLenum shaderType) const
@@ -515,9 +449,10 @@ void RenderingEngine::removeObject(IObject *obj) {
 }
 
 void RenderingEngine::loadMesh(IMesh *newMesh) {
-    list<MeshRef>::iterator meshRef = findMeshRef(newMesh->meshRef);
-    //list<MeshRef>::iterator meshRef = m_meshList.begin();
-    //find(meshRef, m_meshList.end(), newMesh->meshRef);
+    
+    MeshRef newMeshRef = MeshRef();
+    newMeshRef.name = newMesh->getMeshName();
+    list<MeshRef>::iterator meshRef = find(m_meshList.begin(), m_meshList.end(), newMeshRef);
     if (meshRef != m_meshList.end()) {
         newMesh->meshRef = *meshRef;
         meshRef->count += 1;
@@ -548,7 +483,10 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
                      meshData->indices, GL_STATIC_DRAW);
         
         // Setup a new mesh reference for the render engine
-        MeshRef newMeshRef(newMesh->getMeshName(), vertexBuffer, indexBuffer, meshData->indexCount);
+        newMeshRef.name = newMesh->getMeshName();
+        newMeshRef.vertexBuffer = vertexBuffer;
+        newMeshRef.indexBuffer = indexBuffer;
+        newMeshRef.indexCount = meshData->indexCount;
         newMesh->meshRef = newMeshRef;
         m_meshList.push_back(newMeshRef);
         
@@ -558,14 +496,13 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
         delete meshData;
     }
     
-    list<TextureRef>::iterator textureRef = findTextureRef(newMesh->textureRef);
-    //list<TextureRef>::iterator textureRef = m_textureList.begin();
-    //std::find(textureRef, m_textureList.end(), newMesh->textureRef);
+    TextureRef newTextrueRef = TextureRef();
+    newTextrueRef.name = newMesh->getTextureName();
+    list<TextureRef>::iterator textureRef = std::find(m_textureList.begin(), m_textureList.end(), newTextrueRef);
     if (textureRef != m_textureList.end()) {
         newMesh->textureRef = *textureRef;
         textureRef->count += 1;
     }
-    
     else {
         // Open each texture
         GLuint textureID;
@@ -577,7 +514,8 @@ void RenderingEngine::loadMesh(IMesh *newMesh) {
         glGenerateMipmap(GL_TEXTURE_2D);
         
         // Setup a new texture reference
-        TextureRef newTextrueRef(newMesh->getTextureName(), textureID);
+        newTextrueRef.name = newMesh->getTextureName();
+        newTextrueRef.textureBuffer = textureID;
         newMesh->textureRef = newTextrueRef;
         m_textureList.push_back(newTextrueRef);
     }
