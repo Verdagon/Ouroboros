@@ -31,5 +31,11 @@ void Camera::setLoc(ivec2 loc) {
 }
 
 void Camera::setHight(float hight) {
-    m_height = hight;
+    m_height = hight * m_height;
+    if (m_height < 20) {
+        m_height = 20;
+    }
+    if (m_height > 60) {
+        m_height = 60;
+    }
 }
