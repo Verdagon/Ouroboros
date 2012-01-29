@@ -81,7 +81,17 @@ void Map::removeCreature(Creature *creature) {
 }
 
 bool Map::areaIsWalkable(const Position &pos, int radius) {
-    return radius <= grid[pos].maximumRadiusOfInhabitingCreature;
+    if (radius > grid[pos].maximumRadiusOfInhabitingCreature)
+        return false;
+    
+    Position creatureOrigin = pos + Creature::topLeftOffsetForRadius(radius);
+    Position creatureSize = Creature::areaForRadius(radius);
+    
+    for (int x = creatureOrigin.x; x < creatureOrigin.x + creatureSize.x; x++)
+        for (int y = creatureOrigin.y; y < creatureOrigin.y + creatureSize.y; y++)
+            if (grid[Position(x, y)].inhabitingCreature)
+                return false;
+    return true;
 }
 
 bool Map::nextToAnyCalculatedPositions(const Position &currentPosition) {

@@ -223,7 +223,13 @@ public:
                 mesh->size = 2;
                 m_meshList.push_back(mesh);
             } break;
-                
+            
+            case 'g': {
+                IMesh *mesh = new Mesh("goblin.obj", "goblin.png");
+                mesh->size = 2;
+                m_meshList.push_back(mesh);
+            } break;
+            
             default:
                 assert(false);
                 break;
@@ -241,7 +247,7 @@ public:
         for (list<IMesh *>::iterator i = m_meshList.begin(), iEnd = m_meshList.end(); i != iEnd; i++) {
             IMesh *mesh = *i;
             mesh->meshMtx = mat4::Identity();
-            mesh->meshMtx *= mat4::Rotate(-90, vec3(1, 0, 0));
+//            mesh->meshMtx *= mat4::Rotate(-90, vec3(1, 0, 0));
             mesh->meshMtx *= mat4::Translate(center.x - (radius), -(center.y - (radius)), 0);
         }
     }

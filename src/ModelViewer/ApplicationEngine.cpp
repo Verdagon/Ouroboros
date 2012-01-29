@@ -120,12 +120,28 @@ void ApplicationEngine::Initialize(int width, int height) {
         int playerRadius = 3;
         Position playerCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(playerRadius);
         m_player = new Creature('@', playerRadius, playerCenter);
+        m_creatures.push_back(m_player);
         
         m_map->placeCreature(m_player);
         m_renderingEngine->addObject(m_player);
         m_objects3d.push_back(m_player);
         
         setPlayerAndCameraPos(playerCenter);
+    }
+    
+    for (int i = 0; i < 1000; i++) {
+        int goblinRadius = 2;
+        Position goblinCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(goblinRadius);
+        if (!m_map->areaIsWalkable(goblinCenter, goblinRadius))
+            continue;
+        
+        Creature *goblin = new Creature('g', goblinRadius, goblinCenter);
+        goblin->setCenter(goblinCenter);
+        m_creatures.push_back(goblin);
+        
+        m_map->placeCreature(goblin);
+        m_renderingEngine->addObject(goblin);
+        m_objects3d.push_back(goblin);
     }
     
 //    Object *myMesh1 = new Object("atsym.obj", "atsym.png");
