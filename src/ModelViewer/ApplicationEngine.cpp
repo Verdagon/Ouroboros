@@ -79,7 +79,7 @@ void ApplicationEngine::Initialize(int width, int height) {
     m_objects3d.push_back(newObject);
     
     newObject = new Object("pound.obj", "pound.png");
-    newObject->setLoc(vec3(-20, 0, 0));
+    newObject->setLoc(vec3(0, 0, 0));
     m_renderingEngine->addObject(newObject);
     m_objects3d.push_back(newObject);
     
@@ -88,7 +88,7 @@ void ApplicationEngine::Initialize(int width, int height) {
     //m_renderingEngine->addObject(m_testText);
     //m_objects2d.push_back(m_testText);
     
-    m_camera = new Camera(vec3(0, 0, 30));
+    m_camera = new Camera(vec3(-50, -20, 200));
     m_renderingEngine->setCamera(m_camera);
     m_renderingEngine->Initialize(width, height);
 }

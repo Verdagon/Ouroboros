@@ -1,15 +1,17 @@
 #include "Camera.h"
 #include <iostream>
 
-#define DEF_DISTANCE 40
-
 Camera::Camera(vec3 start) {
+    eye = start;
+    ref = vec3(0, 0, 0);
+    up = vec3(0, 0, 1);
+    /*
     fwd = vec3(0, 0, -1);
     eye = start;
     ref = start + fwd;
     up = vec3(0, 1, 0);
     m_pitch = 0;
-    m_yaw = 180;
+    m_yaw = 180;*/
     
     /*
     m_dist = DEF_DISTANCE;
@@ -36,6 +38,7 @@ void Camera::moveInOut(float dist) {
 
 
 void Camera::rotLocal(float pitch, float yaw) {
+    /*
     m_pitch += pitch;
     m_yaw += yaw;
     
@@ -53,5 +56,5 @@ void Camera::rotLocal(float pitch, float yaw) {
      rot = rot * mat4::Rotate(m_yaw, vec3(0,1,0));
      vec4 d = rot.TranslatePoint(vec4(0, 0, 1, 0));
      fwd = vec3(d.x, d.y, d.z);
-     ref = eye + fwd;
+     ref = eye + fwd;*/
 }
