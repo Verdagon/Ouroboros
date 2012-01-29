@@ -57,8 +57,8 @@ Position Map::findCenterOfRandomWalkableAreaOfRadius(int radius) {
 }
 
 void Map::placeCreature(Creature *creature) {
-    Position creatureOrigin = creature->center + Creature::topLeftOffsetForRadius(creature->radius);
-    Position creatureSize = Creature::areaForRadius(creature->radius);
+    Position creatureOrigin = creature->center + topLeftOffsetForRadius(creature->radius);
+    Position creatureSize = areaForRadius(creature->radius);
     
     for (int x = creatureOrigin.x; x < creatureOrigin.x + creatureSize.x; x++) {
         for (int y = creatureOrigin.y; y < creatureOrigin.y + creatureSize.y; y++) {
@@ -69,8 +69,8 @@ void Map::placeCreature(Creature *creature) {
 }
 
 void Map::removeCreature(Creature *creature) {
-    Position creatureOrigin = creature->center + Creature::topLeftOffsetForRadius(creature->radius);
-    Position creatureSize = Creature::areaForRadius(creature->radius);
+    Position creatureOrigin = creature->center + topLeftOffsetForRadius(creature->radius);
+    Position creatureSize = areaForRadius(creature->radius);
     
     for (int x = creatureOrigin.x; x < creatureOrigin.x + creatureSize.x; x++) {
         for (int y = creatureOrigin.y; y < creatureOrigin.y + creatureSize.y; y++) {
@@ -84,8 +84,8 @@ bool Map::areaIsWalkable(const Position &pos, int radius) {
     if (radius > grid[pos].maximumRadiusOfInhabitingCreature)
         return false;
     
-    Position creatureOrigin = pos + Creature::topLeftOffsetForRadius(radius);
-    Position creatureSize = Creature::areaForRadius(radius);
+    Position creatureOrigin = pos + topLeftOffsetForRadius(radius);
+    Position creatureSize = areaForRadius(radius);
     
     for (int x = creatureOrigin.x; x < creatureOrigin.x + creatureSize.x; x++)
         for (int y = creatureOrigin.y; y < creatureOrigin.y + creatureSize.y; y++)
@@ -292,6 +292,8 @@ bool Map::findPath(const Creature *creature, const Position &destination, std::l
     
     std::cout << "openList size: " << openList.size() << std::endl;
     
+    bool result = false;
+    
     if (closedList.count(nodesMap[destination])) {
         std::cout << "Found path" << std::endl;
         
@@ -300,22 +302,31 @@ bool Map::findPath(const Creature *creature, const Position &destination, std::l
             finalPath->push_front(node->position);
         
         
-        for (int currentY = 0; currentY < size.y; currentY++) {
-            for (int currentX = 0; currentX < size.x; currentX++) {
-                Position currentPosition(currentX, currentY);
-                
-                if (std::count(finalPath->begin(), finalPath->end(), currentPosition) == 1)
-                    std::cout << 'X';
-                else
-                    std::cout << (grid[currentPosition].isWalkable() ? '.' : 'n');
-            }
-            std::cout << std::endl;
-        }
+//        for (int currentY = 0; currentY < size.y; currentY++) {
+//            for (int currentX = 0; currentX < size.x; currentX++) {
+//                Position currentPosition(currentX, currentY);
+//                
+//                if (std::count(finalPath->begin(), finalPath->end(), currentPosition) == 1)
+//                    std::cout << 'X';
+//                else
+//                    std::cout << (grid[currentPosition].isWalkable() ? '.' : 'n');
+//            }
+//            std::cout << std::endl;
+//        }
         
-        return true;
+        result = true;
     }
     else {
-        return false;
+        std::cout << "Couldnt find path" << std::endl;
     }
+    
+    for (int x = 0; x < size.x; x++) {
+        for (int y = 0; y < size.y; y++) {
+            Position pos(x, y);
+            delete nodesMap[pos];
+        }
+    }
+    
+    return result;
 }
 

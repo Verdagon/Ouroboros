@@ -31,7 +31,10 @@ public:
     ivec2* GetScreenSize();
     
 private:
-    void setPlayerAndCameraPos(Position pos);
+    void setPlayerAndCameraPos(Position pos, bool force);
+    void unitAttack(Creature *attackingCreature);
+    void unitAct(Creature *actingCreature);
+    bool unitCanMoveTo(Creature *unit, const Position &pos);
     
     ivec2 m_mainScreenSize;
     vec2 m_lastLoc;
@@ -99,13 +102,13 @@ void ApplicationEngine::Initialize(int width, int height) {
     
     
     GenerateOptions options = {
-        100, 100,
-        1347,
+        10, 10,
+        1357,
+        2,
         3,
-        4,
-        6,
-        8,
+        2,
         3,
+        1,
         20,
         Tile(false, '#'),
         Tile(true, '.')
@@ -129,10 +132,10 @@ void ApplicationEngine::Initialize(int width, int height) {
         m_renderingEngine->addObject(m_player);
         m_objects3d.push_back(m_player);
         
-        setPlayerAndCameraPos(playerCenter);
+        setPlayerAndCameraPos(playerCenter, true);
     }
     
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 6; i++) {
         int goblinRadius = 2;
         Position goblinCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(goblinRadius);
         if (!m_map->areaIsWalkable(goblinCenter, goblinRadius))
@@ -158,34 +161,62 @@ void ApplicationEngine::Initialize(int width, int height) {
 //    m_objects3d.push_back(myMesh2);
 }
 
-void ApplicationEngine::setPlayerAndCameraPos(Position pos) {
-    m_map->removeCreature(m_player);
+void ApplicationEngine::unitAttack(Creature *attackingCreature) {
+    Position hitBoxOrigin = attackingCreature->center + topLeftOffsetForRadius(attackingCreature->radius + 2);
+    Position hitBoxSize = areaForRadius(attackingCreature->radius + 2);
     
-    if (m_map->areaIsWalkable(pos, m_player->radius))
-        m_player->center = pos;
-    else
-        pos = m_player->center;
     
-    m_map->placeCreature(m_player);
-    
-    std::cout << "Putting player at " << pos << std::endl;
-    m_player->setCenter(pos);
-    
-    m_map->tiles->setLightPosition(m_map->tileCoordAtPosition(pos));
-    
-    for (std::list<Creature *>::iterator i = m_creatures.begin(), iEnd = m_creatures.end(); i != iEnd; i++) {
-        Creature *creature = *i;
-        if (creature == m_player)
-            continue;
-        
-        float dist = (float)posDistance((Position&)creature->center, (Position&)m_player->center);
-        creature->setVisible(dist < 10 * m_map->tileLengthInMapUnits);
+    for (int x = hitBoxOrigin.x; x < hitBoxOrigin.x + hitBoxSize.x; x++) {
+        for (int y = hitBoxOrigin.y; y < hitBoxOrigin.y + hitBoxSize.y; y++) {
+            if (m_map->grid[Position(x, y)].inhabitingCreature == NULL)
+                continue;
+            
+            if (m_map->grid[Position(x, y)].inhabitingCreature == attackingCreature)
+                continue;
+            
+            Creature *victim = m_map->grid[Position(x, y)].inhabitingCreature;
+            victim->setVisible(false);
+            m_map->removeCreature(victim);
+            std::list<Creature *>::iterator victimIter = std::find(m_creatures.begin(), m_creatures.end(), victim);
+            assert(victimIter != m_creatures.end());
+            m_creatures.erase(victimIter);
+        }
     }
     
-    m_camera->ref = vec3(m_player->center.x - (m_player->radius), -(m_player->center.y - (m_player->radius)), 0);
-    m_camera->fwd = vec3(0, 15, -30);
-    m_camera->eye = m_camera->ref - m_camera->fwd;
-    m_camera->up = vec3(0, 0, 1);
+//    inline Position areaForRadius(int radius) {
+//        int length = radius * 2 - 1;
+//        return Position(length, length);
+//    }
+//    
+//    inline Position topLeftOffsetForRadius(int radius) {
+//        return Position(-(radius - 1), -(radius - 1));
+//    }
+}
+
+void ApplicationEngine::setPlayerAndCameraPos(Position pos, bool force) {
+    if (force || m_player->center != pos) {
+        if (unitCanMoveTo(m_player, pos)) {
+            m_map->removeCreature(m_player);
+            m_player->setCenter(pos);
+            m_map->placeCreature(m_player);
+            
+            m_map->tiles->setLightPosition(m_map->tileCoordAtPosition(pos));
+            
+            for (std::list<Creature *>::iterator i = m_creatures.begin(), iEnd = m_creatures.end(); i != iEnd; i++) {
+                Creature *creature = *i;
+                if (creature == m_player)
+                    continue;
+                
+                float dist = (float)posDistance((Position&)creature->center, (Position&)m_player->center);
+                creature->setVisible(dist < 10 * m_map->tileLengthInMapUnits);
+            }
+            
+            m_camera->ref = vec3(m_player->center.x - (m_player->radius), -(m_player->center.y - (m_player->radius)), 0);
+            m_camera->fwd = vec3(0, 15, -30);
+            m_camera->eye = m_camera->ref - m_camera->fwd;
+            m_camera->up = vec3(0, 0, 1);
+        }
+    }
 }
 
 string* ApplicationEngine::GetResourcePath() {
@@ -196,14 +227,64 @@ void ApplicationEngine::Render() {
     m_renderingEngine->render(m_objects3d, m_objects2d);
 }
 
+bool ApplicationEngine::unitCanMoveTo(Creature *creature, const Position &pos) {
+    if (creature->radius > m_map->grid[pos].maximumRadiusOfInhabitingCreature)
+        return false;
+    
+    Position creatureOrigin = pos + topLeftOffsetForRadius(creature->radius);
+    Position creatureSize = areaForRadius(creature->radius);
+    
+    for (int x = creatureOrigin.x; x < creatureOrigin.x + creatureSize.x; x++)
+        for (int y = creatureOrigin.y; y < creatureOrigin.y + creatureSize.y; y++)
+            if (m_map->grid[Position(x, y)].inhabitingCreature && m_map->grid[Position(x, y)].inhabitingCreature != creature)
+                return false;
+    
+    return true;
+}
+
+void ApplicationEngine::unitAct(Creature *actingCreature) {
+    if (posDistance(actingCreature->center, m_player->center) < 10) {
+        m_map->findPath(actingCreature, m_player->center, &actingCreature->path);
+    }
+    else if (actingCreature->path.empty()) {
+        m_map->findPath(actingCreature, m_player->center, &actingCreature->path);
+    }
+    
+    if (!actingCreature->path.empty()) {
+//        std::cout << "i have a path, lets do it!" << std::endl;
+        Position nextStep = actingCreature->path.front();
+        assert(posDistance(actingCreature->center, nextStep) < 3);
+        
+        if (unitCanMoveTo(actingCreature, nextStep)) {
+            actingCreature->path.pop_front();
+            m_map->removeCreature(actingCreature);
+            actingCreature->setCenter(nextStep);
+            m_map->placeCreature(actingCreature);
+        }
+    }
+}
+
 void ApplicationEngine::UpdateAnimations(float td) {
-    setPlayerAndCameraPos(Position(m_player->center.x + m_direction.x, m_player->center.y + m_direction.y));
+    setPlayerAndCameraPos(Position(m_player->center.x + m_direction.x, m_player->center.y + m_direction.y), false);
     //m_testText->setText("ABC");
     //m_curController->Tic(td);
+    
+    for (std::list<Creature *>::iterator i = m_creatures.begin(), iEnd = m_creatures.end(); i != iEnd; i++) {
+        if (*i != m_player)
+            unitAct(*i);
+    }
 }
 
 void ApplicationEngine::OnFingerUp(vec2 location) {
     m_direction = ivec2(0, 0);
+    
+    int width = m_mainScreenSize.x;
+    int height = m_mainScreenSize.y;
+    
+    if (location.x > width / 3 && location.x < width * 2/3 && location.y > height / 3 && location.y < height * 2/3) {
+        std::cout << "Attacking!" << std::endl;
+        unitAttack(m_player);
+    }
 }
 
 void ApplicationEngine::OnFingerDown(vec2 location) {
@@ -211,13 +292,13 @@ void ApplicationEngine::OnFingerDown(vec2 location) {
     int width = m_mainScreenSize.x;
     int height = m_mainScreenSize.y;
     
-    int deltaX = 0;
+    m_direction.x = 0;
     if (location.x < width / 3)
         m_direction.x = -1;
     if (location.x > width * 2/3)
         m_direction.x = 1;
     
-    int deltaY = 0;
+    m_direction.y = 0;
     if (location.y < height / 3)
         m_direction.y = -1;
     if (location.y > height * 2/3)
@@ -239,7 +320,7 @@ void ApplicationEngine::OnFingerMove(vector<vec2> touches) {
     if (touches[0].y < height / 3)
          m_direction.y = -1;
     if (touches[0].y > height * 2/3)
-         m_direction.x = -1;
+         m_direction.x = 1;
     
     //std::cout << "moving by " << deltaX << "," << deltaY << std::endl;
     

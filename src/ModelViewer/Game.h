@@ -196,21 +196,24 @@ public:
     bool isWalkable() const { return tile->walkable && inhabitingCreature == NULL; }
 };
 
+inline Position areaForRadius(int radius) {
+    int length = radius * 2 - 1;
+    return Position(length, length);
+}
+
+inline Position topLeftOffsetForRadius(int radius) {
+    return Position(-(radius - 1), -(radius - 1));
+}
+
 class Creature : public IObject {
 public:
     const char character;
     int radius; // if radius is 1, the creature inhabits a 1x1 square. If its 2, the creature inhabits a 3x3 square, if its 3, inhabits 5x5 square, etc.
     Position center;
     vec3 orientation;
-    
-    static Position areaForRadius(int radius) {
-        int length = radius * 2 - 1;
-        return Position(length, length);
-    }
-    
-    static Position topLeftOffsetForRadius(int radius) {
-        return Position(-(radius - 1), -(radius - 1));
-    }
+    std::list<Position> path;
+    IMesh *characterMesh;
+//    std::map<Position, IMesh *> unitBlocksByOffset;
     
     Creature(char character_, int radius_, const Position &center_) :
     character(character_),
@@ -234,6 +237,19 @@ public:
                 assert(false);
                 break;
         }
+        
+//        Position topLeft = center + topLeftOffsetForRadius(radius);
+//        Position area = areaForRadius(radius);
+//        
+//        for (int x = 0; x < area.x; x++) {
+//            for (int y = 0; y < area.y; y++) {
+//                Position offset(x - (radius - 1), y - (radius - 1));
+//                Mesh *mesh = new Mesh("unitblock.obj", "blank.png");
+//                mesh->size = 1;
+//                unitBlocksByOffset[offset] = mesh;
+//                m_meshList.push_back(mesh);
+//            }
+//        }
     }
     
     ~Creature() {
@@ -244,12 +260,22 @@ public:
     }
     
     void setCenter(const Position &pos) {
+        center = pos;
         for (list<IMesh *>::iterator i = m_meshList.begin(), iEnd = m_meshList.end(); i != iEnd; i++) {
             IMesh *mesh = *i;
             mesh->meshMtx = mat4::Identity();
 //            mesh->meshMtx *= mat4::Rotate(-90, vec3(1, 0, 0));
             mesh->meshMtx *= mat4::Translate(center.x - (radius), -(center.y - (radius)), 0);
         }
+//        adding unit grids        
+//        for (int x = topLeft.x; x < topLeft.x + area.x; x++) {
+//            for (int y = topLeft.y; y < topLeft.y + area.y; y++) {
+//                Position 
+//                Object *object = new Object("unitblock.obj", "blank.png");
+//                mesh->size = 1;
+//                mesh->meshMtx
+//            }
+//        }
     }
     
     void setVisible(bool visible) {
