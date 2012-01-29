@@ -25,6 +25,7 @@ grid(size) {
 //            }
             
             mesh->meshMtx = mat4::Translate(col * tileLengthInMapUnits, row * tileLengthInMapUnits, 0);
+            std::cout << col * tileLengthInMapUnits << " " << row * tileLengthInMapUnits << std::endl;
             
             m_meshList.push_back(mesh);
         }

@@ -66,13 +66,13 @@ ApplicationEngine::ApplicationEngine(DeviceType deviceType, IRenderingEngine* re
     m_objects2d = list<IObject *>(0);
     
     GenerateOptions options = {
-        40, 30,
+        10, 10,
         1337,
-        4,
-        4,
+        2,
+        2,
         6,
         6,
-        3,
+        1,
         10,
         Tile(false, '#'),
         Tile(true, '.')
@@ -82,10 +82,10 @@ ApplicationEngine::ApplicationEngine(DeviceType deviceType, IRenderingEngine* re
 //    displayMapTiles(*mapTiles);
     
     m_map = new Map(8, mapTiles);
-    
+//    
     m_renderingEngine->addObject(m_map);
     m_objects3d.push_back(m_map);
-
+//
     {
         int playerRadius = 3;
         Position playerCenter = m_map->findCenterOfRandomWalkableAreaOfRadius(playerRadius);
@@ -120,16 +120,15 @@ void ApplicationEngine::Initialize(int width, int height) {
     
     //add a single test object;
     //IObject *newObject = new Object("pound.obj", "pound.png");
-//    Object *newObject = new Object("atsym.obj", "atsym.png");
-//    newObject->setLoc(vec3(20, 0, 0));
-//    m_renderingEngine->addObject(newObject);
-//    m_objects3d.push_back(newObject);
+    Object *newObject = new Object("atsym.obj", "atsym.png");
+    newObject->setLoc(vec3(20, 0, 0));
+    m_renderingEngine->addObject(newObject);
+    m_objects3d.push_back(newObject);
 //    
 //    newObject = new Object("pound.obj", "pound.png");
 //    newObject->setLoc(vec3(-20, 0, 0));
 //    m_renderingEngine->addObject(newObject);
 //    m_objects3d.push_back(newObject);
-    
     
     //m_testText = new TextObject(ivec2(40, 40), ivec2(0, 0));
     //m_renderingEngine->addObject(m_testText);
