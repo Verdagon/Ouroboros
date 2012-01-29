@@ -17,7 +17,7 @@ varying vec2 TextureCoordOut;
 
 void main(void)
 {
-   vec3 N = NormalMatrix * Normal;
+   vec3 N = normalize(NormalMatrix * Normal);
    vec3 L = normalize(LightPosition);
    vec3 E = vec3(0, 0, 1);
    vec3 H = normalize(L + E);
@@ -33,7 +33,3 @@ void main(void)
    vec4 Coord = TextureMatrix * vec4(TextureCoord, 1, 1);
    TextureCoordOut = vec2(Coord);
 }
-
-
-
-
