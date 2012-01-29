@@ -24,6 +24,8 @@
 		3751BE8914D52B75009B55EB /* goblin.obj in Resources */ = {isa = PBXBuildFile; fileRef = 3751BE8814D52B75009B55EB /* goblin.obj */; };
 		3751BE8B14D52B7E009B55EB /* rat.obj in Resources */ = {isa = PBXBuildFile; fileRef = 3751BE8A14D52B7E009B55EB /* rat.obj */; };
 		3751BE8D14D54FD6009B55EB /* atsym.obj in Resources */ = {isa = PBXBuildFile; fileRef = 3751BE8C14D54FD6009B55EB /* atsym.obj */; };
+		379F073A14D5FC88001F2C5A /* Complex.vert in Sources */ = {isa = PBXBuildFile; fileRef = 379F073914D5FC88001F2C5A /* Complex.vert */; };
+		379F073C14D5FCC7001F2C5A /* Complex.vert in Resources */ = {isa = PBXBuildFile; fileRef = 379F073914D5FC88001F2C5A /* Complex.vert */; };
 		394AFDB91406DE3200678710 /* charmap_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 394AFDB81406DE3200678710 /* charmap_white.png */; };
 		395BAE80140842490097282C /* ButtonB.png in Resources */ = {isa = PBXBuildFile; fileRef = 395BAE77140842490097282C /* ButtonB.png */; };
 		395BAE81140842490097282C /* ButtonBL.png in Resources */ = {isa = PBXBuildFile; fileRef = 395BAE78140842490097282C /* ButtonBL.png */; };
@@ -83,6 +85,7 @@
 		3751BE8814D52B75009B55EB /* goblin.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = goblin.obj; sourceTree = "<group>"; };
 		3751BE8A14D52B7E009B55EB /* rat.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rat.obj; sourceTree = "<group>"; };
 		3751BE8C14D54FD6009B55EB /* atsym.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = atsym.obj; sourceTree = "<group>"; };
+		379F073914D5FC88001F2C5A /* Complex.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Complex.vert; sourceTree = "<group>"; };
 		394AFDB81406DE3200678710 /* charmap_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = charmap_white.png; sourceTree = "<group>"; };
 		394AFDBA1407231400678710 /* TextView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextView.cpp; sourceTree = "<group>"; };
 		394AFDBC1407232D00678710 /* TextView.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TextView.hpp; sourceTree = "<group>"; };
@@ -390,6 +393,7 @@
 			children = (
 				39C8596F13C66501008DE491 /* Simple.frag */,
 				39C8597013C66501008DE491 /* Simple.vert */,
+				379F073914D5FC88001F2C5A /* Complex.vert */,
 			);
 			name = Shaders;
 			sourceTree = "<group>";
@@ -463,6 +467,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				379F073C14D5FCC7001F2C5A /* Complex.vert in Resources */,
 				39C8597113C66578008DE491 /* Simple.frag in Resources */,
 				39C8597213C66578008DE491 /* Simple.vert in Resources */,
 				39E90ADD13C4D5B600D5035E /* InfoPlist.strings in Resources */,
@@ -518,6 +523,7 @@
 				3751BE6614D46938009B55EB /* TextObject.cpp in Sources */,
 				B11EE87D14D4EB970055DEAE /* GenerateMapTiles.cpp in Sources */,
 				B11EE87E14D4EB970055DEAE /* Map.cpp in Sources */,
+				379F073A14D5FC88001F2C5A /* Complex.vert in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
