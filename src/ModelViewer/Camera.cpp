@@ -27,7 +27,7 @@ void Camera::setLoc(ivec2 loc) {
     eye = ref - m_dir * DISTANCE;
     eye.z = m_height;
     up = vec3(0, 0, 1);
-    std::cout << "(" << eye.x << "," << eye.y << "," << eye.z << ")\n";
+    //std::cout << "(" << eye.x << "," << eye.y << "," << eye.z << ")\n";
 }
 
 void Camera::setHight(float hight) {

@@ -290,12 +290,12 @@ bool Map::findPath(const Creature *creature, const Position &destination, std::l
         }
     }
     
-    std::cout << "openList size: " << openList.size() << std::endl;
+    //std::cout << "openList size: " << openList.size() << std::endl;
     
     bool result = false;
     
     if (closedList.count(nodesMap[destination])) {
-        std::cout << "Found path" << std::endl;
+        //std::cout << "Found path" << std::endl;
         
         finalPath->clear();
         for (Node *node = nodesMap[destination]; node; node = node->parent)

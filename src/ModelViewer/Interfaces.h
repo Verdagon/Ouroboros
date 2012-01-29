@@ -163,6 +163,8 @@ struct IRenderingEngine {
     virtual void addObject(IObject *obj) = 0;      // Before any object can be renderd it needs to be added by this method.
     virtual void removeObject(IObject *obj) = 0;   // Removes the object from the rendering engine.
     virtual void render(list<IObject *> &objects3d, list<IObject *> &objects2d) = 0;
+    virtual vec3 getScreenLoc(vec3 point) = 0;
+    virtual vec3 getPickLoc(vec2 coords, vec3 ref) = 0;
     virtual ~IRenderingEngine() {}
 };
 
