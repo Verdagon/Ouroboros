@@ -52,6 +52,7 @@ private:
     std::list<Creature *> m_creatures;
     Creature *m_player;
     float currentTime;
+    float m_hype;
 };
 
 #endif
