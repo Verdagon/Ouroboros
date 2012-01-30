@@ -143,6 +143,7 @@ void ApplicationEngine::Initialize(int width, int height) {
             continue;
         
         Creature *goblin = new Creature(i % 2 ? 'g' : 'r', goblinRadius, goblinCenter);
+        goblin->nextActionTime = 3 + i * .1;
         goblin->setCenter(goblinCenter);
         addCreature(goblin);
     }
