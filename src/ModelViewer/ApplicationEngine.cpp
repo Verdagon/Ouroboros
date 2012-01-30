@@ -77,6 +77,7 @@ ApplicationEngine::ApplicationEngine(DeviceType deviceType, IRenderingEngine* re
     m_resourceManager = resourceManager;
     m_objects3d = list<IObject *>(0);
     m_objects2d = list<IObject *>(0);
+    m_hype = 0;
     
 //    Position destination = map.findCenterOfRandomWalkableAreaOfRadius(playerRadius);
 //    
@@ -329,6 +330,8 @@ void ApplicationEngine::OnFingerUp(vec2 location) {
         std::cout << "Attacking!" << std::endl;
         unitAttack(m_player);
     }
+    
+    m_hype = 0;
 }
 
 void ApplicationEngine::OnFingerDown(vec2 location) {
@@ -352,63 +355,43 @@ void ApplicationEngine::OnFingerDown(vec2 location) {
     if (touchPoint.y > (playerPoint.y + 0.15)) {
         m_direction.y = -1;
     }
-    
-    /*
-    // todo: autodetect w and h
-    int width = m_mainScreenSize.x;
-    int height = m_mainScreenSize.y;
-    
-    m_direction.x = 0;
-    if (location.x < width / 3)
-        m_direction.x = -1;
-    if (location.x > width * 2/3)
-        m_direction.x = 1;
-    
-    m_direction.y = 0;
-    if (location.y < height / 3)
-        m_direction.y = -1;
-    if (location.y > height * 2/3)
-        m_direction.y = 1;*/
 }
 
 void ApplicationEngine::OnFingerMove(vector<vec2> touches) {
-    vec3 playerPoint = vec3(m_player->center.x - m_player->radius, -(m_player->center.y - m_player->radius) , 0);
-    vec3 touchPoint = m_renderingEngine->getPickLoc(touches[0], playerPoint);
-    //std::cout << "(" << playerPoint.x << ", " << playerPoint.y << ") - (" << touchPoint.x << ", " << touchPoint.y << ")\n";
     
-    m_direction.x = 0;
-    if (touchPoint.x < (playerPoint.x - 0.15)) {
-        m_direction.x = -1;
+    if (touches.size() < 3) {
+        vec3 playerPoint = vec3(m_player->center.x - m_player->radius, -(m_player->center.y - m_player->radius) , 0);
+        vec3 touchPoint = m_renderingEngine->getPickLoc(touches[0], playerPoint);
+        //std::cout << "(" << playerPoint.x << ", " << playerPoint.y << ") - (" << touchPoint.x << ", " << touchPoint.y << ")\n";
+        
+        m_direction.x = 0;
+        if (touchPoint.x < (playerPoint.x - 0.15)) {
+            m_direction.x = -1;
+        }
+        if (touchPoint.x > (playerPoint.x + 0.15)) {
+            m_direction.x = 1;
+        }
+        
+        m_direction.y = 0;
+        if (touchPoint.y < (playerPoint.y - 0.15)) {
+            m_direction.y = 1;
+        }
+        if (touchPoint.y > (playerPoint.y + 0.15)) {
+            m_direction.y = -1;
+        }
+        
+        m_hype = 0;
     }
-    if (touchPoint.x > (playerPoint.x + 0.15)) {
-        m_direction.x = 1;
+    else {
+        float length =  touches[1].x - touches[3].x;
+        float height = touches[1].y - touches[3].y;
+        float nextHype = sqrt(length * length + height * height);
+        if (m_hype != 0) {
+            float scale = m_hype / nextHype;
+            m_camera->setHight(scale);
+        }
+        m_hype = nextHype;
     }
-    
-    m_direction.y = 0;
-    if (touchPoint.y < (playerPoint.y - 0.15)) {
-        m_direction.y = 1;
-    }
-    if (touchPoint.y > (playerPoint.y + 0.15)) {
-        m_direction.y = -1;
-    }
-    /*
-    // todo: autodetect w and h
-    int width = m_mainScreenSize.x;
-    int height = m_mainScreenSize.y;
-    
-    if (touches[0].x < width / 3)
-         m_direction.x = -1;
-    if (touches[0].x > width * 2/3)
-         m_direction.x = 1;
-    
-    if (touches[0].y < height / 3)
-         m_direction.y = -1;
-    if (touches[0].y > height * 2/3)
-         m_direction.x = 1;
-    */
-    //std::cout << "moving by " << deltaX << "," << deltaY << std::endl;
-    
-    //setPlayerAndCameraPos(Position(m_player->center.x + deltaX, m_player->center.y + deltaY));
 }
 
 void ApplicationEngine::AppWillResignActive() {
